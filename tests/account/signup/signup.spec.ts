@@ -41,5 +41,13 @@ describe('SignupService', () => {
 
       expect(result).toBeUndefined()
     })
+
+    it('Should rethrow if LoadAccountByEmailRepository throws', async () => {
+      loadAccountByEmailRepository.loadByEmail.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, name, password })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
