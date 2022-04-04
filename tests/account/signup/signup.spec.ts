@@ -1,4 +1,4 @@
-import { Hash } from '@/data/protocols/cryptography'
+import { Encrypt, Hash } from '@/data/protocols/cryptography'
 import { AddAccountRepository, LoadAccountByEmailRepository } from '@/data/protocols/db'
 import { SignupService } from '@/data/services/account/signup/signup'
 
@@ -8,12 +8,15 @@ describe('SignupService', () => {
   let sut: SignupService
   let accountRepo: MockProxy<LoadAccountByEmailRepository & AddAccountRepository>
   let hash: MockProxy<Hash>
+  let encrypt: MockProxy<Encrypt>
   let email: string
   let name: string
   let password: string
   let hashedPassword: string
+  let id: string
 
   beforeAll(() => {
+    id = 'any_id'
     email = 'any_email'
     name = 'any_name'
     password = 'any_password'
@@ -24,14 +27,16 @@ describe('SignupService', () => {
     hash.hash.mockResolvedValue(hashedPassword)
     accountRepo = mock()
     accountRepo.add.mockResolvedValue({
-      id: 'valid_id',
-      name: 'any_name',
-      email: 'any_email'
+      id,
+      name,
+      email
     })
+    encrypt = mock()
+    encrypt.encrypt.mockResolvedValue('any_token')
   })
 
   beforeEach(() => {
-    sut = new SignupService(accountRepo, hash)
+    sut = new SignupService(accountRepo, hash, encrypt)
   })
 
   describe('LoadAccountByEmail Repository', () => {
@@ -106,6 +111,15 @@ describe('SignupService', () => {
       const result = await sut.perform({ email, name, password })
 
       expect(result).toBeUndefined()
+    })
+  })
+
+  describe('Encrypt', () => {
+    it('Should call Encrypt with valid id once', async () => {
+      await sut.perform({ email, name, password })
+
+      expect(encrypt.encrypt).toHaveBeenCalledWith({ plaintext: id })
+      expect(encrypt.encrypt).toHaveBeenCalledTimes(1)
     })
   })
 })
