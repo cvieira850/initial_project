@@ -1,5 +1,5 @@
-import { Encrypt, Hash } from '@/data/protocols/cryptography'
 import { AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '@/data/protocols/db'
+import { Encrypt, Hash } from '@/data/protocols/cryptography'
 import { SignupService } from '@/data/services/account/signup/signup'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -162,6 +162,14 @@ describe('SignupService', () => {
       const promise = sut.perform({ email, name, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+
+    it('Should return undefined if UpdateAccessTokenRepository returns undefined', async () => {
+      accountRepo.updateAccessToken.mockReturnValueOnce(Promise.resolve(undefined))
+
+      const result = await sut.perform({ email, name, password })
+
+      expect(result).toBeUndefined()
     })
   })
 })
