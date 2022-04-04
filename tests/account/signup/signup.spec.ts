@@ -99,5 +99,13 @@ describe('SignupService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if AddAccountRepository returns undefined', async () => {
+      accountRepo.add.mockReturnValueOnce(Promise.resolve(undefined))
+
+      const result = await sut.perform({ email, name, password })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
