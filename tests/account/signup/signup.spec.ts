@@ -1,41 +1,49 @@
 import { Hash } from '@/data/protocols/cryptography'
-import { LoadAccountByEmailRepository } from '@/data/protocols/db'
+import { AddAccountRepository, LoadAccountByEmailRepository } from '@/data/protocols/db'
 import { SignupService } from '@/data/services/account/signup/signup'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('SignupService', () => {
   let sut: SignupService
-  let loadAccountByEmailRepository: MockProxy<LoadAccountByEmailRepository>
+  let accountRepo: MockProxy<LoadAccountByEmailRepository & AddAccountRepository>
   let hash: MockProxy<Hash>
   let email: string
   let name: string
   let password: string
+  let hashedPassword: string
 
   beforeAll(() => {
     email = 'any_email'
     name = 'any_name'
     password = 'any_password'
-    loadAccountByEmailRepository = mock()
-    loadAccountByEmailRepository.loadByEmail.mockResolvedValue(undefined)
+    hashedPassword = 'any_hashed_password'
+    accountRepo = mock()
+    accountRepo.loadByEmail.mockResolvedValue(undefined)
     hash = mock()
-    hash.hash.mockResolvedValue('hashed_password')
+    hash.hash.mockResolvedValue(hashedPassword)
+    accountRepo = mock()
+    accountRepo.add.mockResolvedValue({
+      id: 'valid_id',
+      name: 'any_name',
+      email: 'any_email'
+    })
   })
 
   beforeEach(() => {
-    sut = new SignupService(loadAccountByEmailRepository, hash)
+    sut = new SignupService(accountRepo, hash)
   })
 
   describe('LoadAccountByEmail Repository', () => {
     it('Should call LoadAccountByEmail with correct email', async () => {
       await sut.perform({ email, name, password })
 
-      expect(loadAccountByEmailRepository.loadByEmail).toHaveBeenCalledWith(email)
-      expect(loadAccountByEmailRepository.loadByEmail).toHaveBeenCalledTimes(1)
+      expect(accountRepo.loadByEmail).toHaveBeenCalledWith(email)
+      expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
     })
 
     it('Should return undefined if LoadAccountByEmailRepository retuns an account', async () => {
-      loadAccountByEmailRepository.loadByEmail.mockResolvedValueOnce({
+      accountRepo.loadByEmail.mockResolvedValueOnce({
         id: 'any_id',
         name: 'any_name',
         email: 'any_email'
@@ -47,7 +55,7 @@ describe('SignupService', () => {
     })
 
     it('Should rethrow if LoadAccountByEmailRepository throws', async () => {
-      loadAccountByEmailRepository.loadByEmail.mockRejectedValueOnce(new Error())
+      accountRepo.loadByEmail.mockRejectedValueOnce(new Error())
 
       const promise = sut.perform({ email, name, password })
 
@@ -69,6 +77,19 @@ describe('SignupService', () => {
       const promise = sut.perform({ email, name, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+  })
+
+  describe('AddAccountRepository', () => {
+    it('Should call AddAccountRepository with correct values', async () => {
+      await sut.perform({ email, name, password })
+
+      expect(accountRepo.add).toHaveBeenCalledWith({
+        name,
+        email,
+        password: hashedPassword
+      })
+      expect(accountRepo.add).toHaveBeenCalledTimes(1)
     })
   })
 })
