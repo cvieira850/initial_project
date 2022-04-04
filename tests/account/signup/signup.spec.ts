@@ -1,12 +1,12 @@
 import { Encrypt, Hash } from '@/data/protocols/cryptography'
-import { AddAccountRepository, LoadAccountByEmailRepository } from '@/data/protocols/db'
+import { AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '@/data/protocols/db'
 import { SignupService } from '@/data/services/account/signup/signup'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('SignupService', () => {
   let sut: SignupService
-  let accountRepo: MockProxy<LoadAccountByEmailRepository & AddAccountRepository>
+  let accountRepo: MockProxy<LoadAccountByEmailRepository & AddAccountRepository & UpdateAccessTokenRepository>
   let hash: MockProxy<Hash>
   let encrypt: MockProxy<Encrypt>
   let email: string
@@ -14,6 +14,7 @@ describe('SignupService', () => {
   let password: string
   let hashedPassword: string
   let id: string
+  let accessToken: string
 
   beforeAll(() => {
     id = 'any_id'
@@ -21,6 +22,7 @@ describe('SignupService', () => {
     name = 'any_name'
     password = 'any_password'
     hashedPassword = 'any_hashed_password'
+    accessToken = 'any_access_token'
     accountRepo = mock()
     accountRepo.loadByEmail.mockResolvedValue(undefined)
     hash = mock()
@@ -32,7 +34,13 @@ describe('SignupService', () => {
       email
     })
     encrypt = mock()
-    encrypt.encrypt.mockResolvedValue('any_token')
+    encrypt.encrypt.mockResolvedValue(accessToken)
+    accountRepo.updateAccessToken.mockResolvedValue({
+      id,
+      name,
+      email,
+      access_token: accessToken
+    })
   })
 
   beforeEach(() => {
@@ -128,6 +136,18 @@ describe('SignupService', () => {
       const promise = sut.perform({ email, name, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+  })
+
+  describe('UpdateAccessTokenRepository', () => {
+    it('Should call UpdateAccessTokenRepository with correct values', async () => {
+      await sut.perform({ email, name, password })
+
+      expect(accountRepo.updateAccessToken).toHaveBeenCalledWith({
+        id,
+        accessToken
+      })
+      expect(accountRepo.updateAccessToken).toHaveBeenCalledTimes(1)
     })
   })
 })
