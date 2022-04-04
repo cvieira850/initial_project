@@ -51,7 +51,7 @@ describe('SignupService', () => {
     it('Should call LoadAccountByEmail with correct email', async () => {
       await sut.perform({ email, name, password })
 
-      expect(accountRepo.loadByEmail).toHaveBeenCalledWith(email)
+      expect(accountRepo.loadByEmail).toHaveBeenCalledWith({ email })
       expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
     })
 
