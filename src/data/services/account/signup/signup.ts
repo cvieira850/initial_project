@@ -8,12 +8,21 @@ export class SignupService implements Signup {
   ) {}
 
   public perform = async ({ email, name, password }: Signup.Params): Promise<Signup.Result> => {
-    await this.accountRepo.loadByEmail(email)
-    const hashedPassword = await this.hash.hash({ plaintext: password })
-    const account = await this.accountRepo.add({ email, name, password: hashedPassword })
-    if (account) {
-      const accessToken = await this.encrypt.encrypt({ plaintext: account.id })
-      await this.accountRepo.updateAccessToken({ id: account.id, accessToken })
+    const account = await this.accountRepo.loadByEmail(email)
+    if (!account) {
+      const hashedPassword = await this.hash.hash({ plaintext: password })
+      if (hashedPassword) {
+        const accountLoaded = await this.accountRepo.add({ email, name, password: hashedPassword })
+        if (accountLoaded) {
+          const accessToken = await this.encrypt.encrypt({ plaintext: accountLoaded.id })
+          const updatedAccount = await this.accountRepo.updateAccessToken({ id: accountLoaded.id, accessToken })
+          if (updatedAccount) {
+            return {
+              accessToken
+            }
+          }
+        }
+      }
     }
     return undefined
   }
