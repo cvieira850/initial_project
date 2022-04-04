@@ -29,5 +29,17 @@ describe('SignupService', () => {
       expect(loadAccountByEmailRepository.loadByEmail).toHaveBeenCalledWith(email)
       expect(loadAccountByEmailRepository.loadByEmail).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return undefined if LoadAccountByEmailRepository retuns an account', async () => {
+      loadAccountByEmailRepository.loadByEmail.mockResolvedValueOnce({
+        id: 'any_id',
+        name: 'any_name',
+        email: 'any_email'
+      })
+
+      const result = await sut.perform({ email, name, password })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
