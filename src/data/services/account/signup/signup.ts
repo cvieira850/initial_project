@@ -1,8 +1,8 @@
-import { LoadAccountByEmailRepository, Signup, Hash, AddAccountRepository, Encrypt } from './signup-protocols'
+import { LoadAccountByEmailRepository, Signup, Hash, AddAccountRepository, Encrypt, UpdateAccessTokenRepository } from './signup-protocols'
 
 export class SignupService implements Signup {
   constructor (
-    private readonly accountRepo: LoadAccountByEmailRepository & AddAccountRepository,
+    private readonly accountRepo: LoadAccountByEmailRepository & AddAccountRepository & UpdateAccessTokenRepository,
     private readonly hash: Hash,
     private readonly encrypt: Encrypt
   ) {}
@@ -12,7 +12,8 @@ export class SignupService implements Signup {
     const hashedPassword = await this.hash.hash({ plaintext: password })
     const account = await this.accountRepo.add({ email, name, password: hashedPassword })
     if (account) {
-      await this.encrypt.encrypt({ plaintext: account.id })
+      const accessToken = await this.encrypt.encrypt({ plaintext: account.id })
+      await this.accountRepo.updateAccessToken({ id: account.id, accessToken })
     }
     return undefined
   }
