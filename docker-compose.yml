@@ -5,7 +5,7 @@ services:
       context: ./conf
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION}
-    container_name: postgres
+    container_name: postgres_api
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:
@@ -21,20 +21,20 @@ services:
         retries: 5
     networks:
       - api_network
-  api-service:
-    build: .
-    volumes:
-      - .:/home/node/app
-    container_name: bolerplate-typescript
-    ports:
-      - 8080:8080
-    networks:
-      - api_network
-    depends_on:
-      postgres:
-        condition: service_healthy
-    links:
-      - postgres
+  # api-service:
+  #   build: .
+  #   volumes:
+  #     - .:/home/node/app
+  #   container_name: bolerplate-typescript
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - api_network
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   links:
+  #     - postgres
 networks:
     api_network:
         driver: bridge

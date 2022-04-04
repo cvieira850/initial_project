@@ -1,10 +1,10 @@
 import { Account } from '@/domain/models'
 
 export interface AddAccountRepository {
-  add: (account: AddAcountRepository.Params) => Promise<AddAcountRepository.Result>
+  add: (account: AddAccountRepository.Params) => Promise<AddAccountRepository.Result>
 }
 
-export namespace AddAcountRepository {
+export namespace AddAccountRepository {
   export type Params = {
     name: string
     email: string
