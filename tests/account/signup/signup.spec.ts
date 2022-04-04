@@ -91,5 +91,13 @@ describe('SignupService', () => {
       })
       expect(accountRepo.add).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if AddAccountRepository throws', async () => {
+      accountRepo.add.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, name, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
