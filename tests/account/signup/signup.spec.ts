@@ -1,3 +1,4 @@
+import { Hash } from '@/data/protocols/cryptography'
 import { LoadAccountByEmailRepository } from '@/data/protocols/db'
 import { SignupService } from '@/data/services/account/signup/signup'
 
@@ -6,6 +7,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 describe('SignupService', () => {
   let sut: SignupService
   let loadAccountByEmailRepository: MockProxy<LoadAccountByEmailRepository>
+  let hash: MockProxy<Hash>
   let email: string
   let name: string
   let password: string
@@ -16,10 +18,12 @@ describe('SignupService', () => {
     password = 'any_password'
     loadAccountByEmailRepository = mock()
     loadAccountByEmailRepository.loadByEmail.mockResolvedValue(undefined)
+    hash = mock()
+    hash.hash.mockResolvedValue('hashed_password')
   })
 
   beforeEach(() => {
-    sut = new SignupService(loadAccountByEmailRepository)
+    sut = new SignupService(loadAccountByEmailRepository, hash)
   })
 
   describe('LoadAccountByEmail Repository', () => {
@@ -48,6 +52,15 @@ describe('SignupService', () => {
       const promise = sut.perform({ email, name, password })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('Hash', () => {
+    it('Should call Hash with correct password', async () => {
+      await sut.perform({ email, name, password })
+
+      expect(hash.hash).toHaveBeenCalledWith({ plaintext: password })
+      expect(hash.hash).toHaveBeenCalledTimes(1)
     })
   })
 })
