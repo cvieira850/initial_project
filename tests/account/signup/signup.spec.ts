@@ -149,5 +149,13 @@ describe('SignupService', () => {
       })
       expect(accountRepo.updateAccessToken).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if UpdateAccessTokenRepository throws', async () => {
+      accountRepo.updateAccessToken.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, name, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
