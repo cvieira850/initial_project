@@ -55,7 +55,7 @@ describe('SignupService', () => {
       expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
     })
 
-    it('Should return undefined if LoadAccountByEmailRepository retuns an account', async () => {
+    it('Should return undefined if LoadAccountByEmailRepository returns an account', async () => {
       accountRepo.loadByEmail.mockResolvedValueOnce({
         id: 'any_id',
         name: 'any_name',
@@ -148,6 +148,12 @@ describe('SignupService', () => {
         accessToken
       })
       expect(accountRepo.updateAccessToken).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return accessToken on UpdateAccessTokenRepository success', async () => {
+      const result = await sut.perform({ email, name, password })
+
+      expect(result).toEqual({ accessToken })
     })
 
     it('Should rethrow if UpdateAccessTokenRepository throws', async () => {
