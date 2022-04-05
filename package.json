@@ -5,7 +5,7 @@
   "author": "Caio Vieira",
   "scripts": {
     "start": "node dist/main",
-    "dev": "ts-node-dev src/main",
+    "dev": "ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "lint": "eslint .",
     "lint:fix": "yarn lint -- --fix",
