@@ -13,16 +13,17 @@ export class SignupController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
+    console.log('cheguei dentro do controller')
     const result = await this.signup.perform({ email: httpRequest.body.email, name: httpRequest.body.name, password: httpRequest.body.password })
     return result === undefined ? unauthorized() : ok(result)
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
     return [
-      ...Builder.of({ value: httpRequest.body.email, fieldName: 'email' }).required().validateEmail().build(),
-      ...Builder.of({ value: httpRequest.body.name, fieldName: 'name' }).required().build(),
-      ...Builder.of({ value: httpRequest.body.password, fieldName: 'password' }).required().build(),
-      ...Builder.of({ value: httpRequest.body.passwordConfirmation, fieldName: 'passwordConfirmation' }).required().build(),
+      ...Builder.of({ value: httpRequest.body.email, fieldName: 'email' }).required().validateEmail().string().build(),
+      ...Builder.of({ value: httpRequest.body.name, fieldName: 'name' }).required().string().build(),
+      ...Builder.of({ value: httpRequest.body.password, fieldName: 'password' }).required().string().build(),
+      ...Builder.of({ value: httpRequest.body.passwordConfirmation, fieldName: 'passwordConfirmation' }).required().string().build(),
       ...Builder.of({ value: httpRequest.body.password, fieldName: 'passwordConfirmation' }).validateCompareFields(httpRequest.body.passwordConfirmation).build()
     ]
   }
