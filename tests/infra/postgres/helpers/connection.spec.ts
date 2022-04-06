@@ -25,6 +25,8 @@ describe('PgConnection', () => {
   let closeSpy: jest.Mock
   let startTransactionSpy: jest.Mock
   let releaseSpy: jest.Mock
+  let commitTransactionSpy: jest.Mock
+  let rollbackTransactionSpy: jest.Mock
   let sut : PgConnection
 
   beforeAll(() => {
@@ -35,8 +37,12 @@ describe('PgConnection', () => {
     mocked(getConnectionManager).mockImplementation(getConnectionManagerSpy)
     startTransactionSpy = jest.fn()
     releaseSpy = jest.fn()
+    commitTransactionSpy = jest.fn()
+    rollbackTransactionSpy = jest.fn()
     createQueryRunnerSpy = jest.fn().mockReturnValue({
       startTransaction: startTransactionSpy,
+      commitTransaction: commitTransactionSpy,
+      rollbackTransaction: rollbackTransactionSpy,
       release: releaseSpy
     })
     createConnectionSpy = jest.fn().mockResolvedValue({
@@ -129,17 +135,33 @@ describe('PgConnection', () => {
 
   it('Should commit transaction', async () => {
     await sut.connect()
-    await sut.closeTransaction()
+    await sut.commitTransaction()
 
-    expect(releaseSpy).toHaveBeenCalledWith()
-    expect(releaseSpy).toHaveBeenCalledTimes(1)
+    expect(commitTransactionSpy).toHaveBeenCalledWith()
+    expect(commitTransactionSpy).toHaveBeenCalledTimes(1)
     await sut.disconnect()
   })
 
-  it('Should return ConnectionNotFoundError  on closeTransaction if connection is not found', async () => {
-    const promise =  sut.closeTransaction()
+  it('Should return ConnectionNotFoundError  on commitTransaction if connection is not found', async () => {
+    const promise =  sut.commitTransaction()
 
-    expect(releaseSpy).not.toHaveBeenCalled()
+    expect(commitTransactionSpy).not.toHaveBeenCalled()
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError())
+  })
+
+  it('Should rollback transaction', async () => {
+    await sut.connect()
+    await sut.rollbackTransaction()
+
+    expect(rollbackTransactionSpy).toHaveBeenCalledWith()
+    expect(rollbackTransactionSpy).toHaveBeenCalledTimes(1)
+    await sut.disconnect()
+  })
+
+  it('Should return ConnectionNotFoundError  on rollbackTransaction if connection is not found', async () => {
+    const promise =  sut.rollbackTransaction()
+
+    expect(rollbackTransactionSpy).not.toHaveBeenCalled()
     await expect(promise).rejects.toThrow(new ConnectionNotFoundError())
   })
 })
