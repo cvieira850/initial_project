@@ -1,4 +1,4 @@
-import { SignupController } from '@/application/controllers'
+import { SignupController, Controller } from '@/application/controllers'
 import { ServerError, UnauthorizedError } from '@/application/errors'
 import { CompareFieldsValidation, EmailValidation, EmailValidatorAdapter, RequiredStringValidator, StringValidator } from '@/application/validation'
 import { Signup } from '@/domain/usecases'
@@ -27,6 +27,10 @@ describe('SignupController', () => {
   beforeEach(() => {
     sut = new SignupController(signup)
   })
+  it('Should extend Controller', async () => {
+    expect(sut).toBeInstanceOf(Controller)
+  })
+
   it('Should build Validators correctly', async () => {
     const validators = sut.buildValidators({ body: { email, name, password, passwordConfirmation } })
 
