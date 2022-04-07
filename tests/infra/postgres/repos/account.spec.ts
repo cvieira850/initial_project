@@ -1,18 +1,22 @@
 import { User } from '@/infra/postgres/entities'
 import { PgAccountRepository } from '@/infra/postgres/repos'
 import { makeFakeDb } from '@/tests/infra/postgres/mocks'
+import { PgRepository } from '@/infra/postgres/repos/repository'
+import { PgConnection } from '@/infra/postgres/helpers'
 
 import { IBackup } from 'pg-mem'
-import { getConnection, getRepository, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 describe('AccountPgRepository', () => {
   let sut: PgAccountRepository
+  let connection: PgConnection
   let pgUserRepo: Repository<User>
   let backup: IBackup
 
   beforeAll(async () => {
+    connection = PgConnection.getInstance()
     const db = await makeFakeDb([User])
     backup = db.backup()
-    pgUserRepo = getRepository(User)
+    pgUserRepo = connection.getRepository(User)
   })
   beforeEach(() => {
     backup.restore()
@@ -20,7 +24,11 @@ describe('AccountPgRepository', () => {
   })
 
   afterAll(async () => {
-    await getConnection().close()
+    await connection.disconnect()
+  })
+
+  it('Should extend PgRepository', async () => {
+    expect(sut).toBeInstanceOf(PgRepository)
   })
 
   describe('loadByEmail', () => {

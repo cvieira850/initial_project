@@ -1,17 +1,19 @@
 import { InvalidParamError, RequiredFieldError, UnauthorizedError } from '@/application/errors'
 import { User } from '@/infra/postgres/entities'
+import { PgConnection } from '@/infra/postgres/helpers'
 import { app } from '@/main/config/app'
 import { makeFakeDb } from '@/tests/infra/postgres/mocks'
 
 import { IBackup } from 'pg-mem'
 import request from 'supertest'
-import { getConnection } from 'typeorm'
 
 describe('Signup Route', () => {
   describe('POST /signup', () => {
     let backup: IBackup
+    let connection: PgConnection
 
     beforeAll(async () => {
+      connection = PgConnection.getInstance()
       const db = await makeFakeDb([User])
       backup = db.backup()
     })
@@ -19,7 +21,7 @@ describe('Signup Route', () => {
       backup.restore()
     })
     afterAll(async () => {
-      await getConnection().close()
+      await connection.disconnect()
     })
     it('should return 200 with accessToken', async () => {
       await request(app)

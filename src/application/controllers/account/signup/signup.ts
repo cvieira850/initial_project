@@ -13,7 +13,6 @@ export class SignupController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
-    console.log('cheguei dentro do controller')
     const result = await this.signup.perform({ email: httpRequest.body.email, name: httpRequest.body.name, password: httpRequest.body.password })
     return result === undefined ? unauthorized() : ok(result)
   }
