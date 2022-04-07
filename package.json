@@ -14,7 +14,8 @@
     "test:staged": "yarn test --findRelatedTests",
     "test:coverage": "yarn test --coverage",
     "test:integration": "yarn test -c ./jest.integration.config.js",
-    "typeorm": "ts-node-dev  -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node-dev  -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "test:ci": "yarn test --coverage"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
