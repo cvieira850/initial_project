@@ -1,21 +1,21 @@
 import { AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from "@/data/protocols/db";
 import { User } from "@/infra/postgres/entities";
-
-import { getRepository } from "typeorm";
-
+import { PgConnection } from "@/infra/postgres/helpers";
+import { PgRepository } from "./repository";
 
 type LoadParams = LoadAccountByEmailRepository.Params
 type LoadResult = LoadAccountByEmailRepository.Result
 type AddParams = AddAccountRepository.Params
 type AddResult = AddAccountRepository.Result
 
-export class PgAccountRepository implements
+export class PgAccountRepository extends PgRepository implements
   LoadAccountByEmailRepository,
   AddAccountRepository,
   UpdateAccessTokenRepository
 {
+
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
-    const pgUserRepo = getRepository(User)
+    const pgUserRepo = this.getRepository(User)
     const pgUser = await pgUserRepo.findOne({ email: params.email })
     if (pgUser) {
       return {
@@ -27,7 +27,7 @@ export class PgAccountRepository implements
   }
 
   async add (params: AddParams): Promise<AddResult> {
-    const pgUserRepo = getRepository(User)
+    const pgUserRepo = this.getRepository(User)
     const account = await pgUserRepo.save({
       email: params.email,
       name: params.name,
@@ -44,7 +44,7 @@ export class PgAccountRepository implements
   }
 
   async updateAccessToken (params: UpdateAccessTokenRepository.Params): Promise<UpdateAccessTokenRepository.Result> {
-    const UserRepository = getRepository(User)
+    const UserRepository = this.getRepository(User)
     const account = await UserRepository.findOne(params.id)
     if (account !== undefined) {
       account.access_token = params.accessToken
