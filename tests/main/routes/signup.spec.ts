@@ -1,5 +1,4 @@
-import { UnauthorizedError } from '@/application/errors'
-// import { InvalidParamError, RequiredFieldError } from '@/application/errors'
+import { InvalidParamError, RequiredFieldError, UnauthorizedError } from '@/application/errors'
 import { User } from '@/infra/postgres/entities'
 import { PgConnection } from '@/infra/postgres/helpers'
 import { app } from '@/main/config/app'
@@ -43,55 +42,55 @@ describe('Signup Route', () => {
         .expect(401, { error: new UnauthorizedError().message })
     })
 
-    // it('should return 400 with RequiredFieldError', async () => {
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com' })
-    //     .expect(400, { error: new RequiredFieldError('name').message })
+    it('should return 400 with RequiredFieldError', async () => {
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com' })
+        .expect(400, { error: new RequiredFieldError('name').message })
 
-    //   const { status, body } = await request(app)
-    //     .post('/api/signup')
-    //     .send({ name: 'teste' })
+      const { status, body } = await request(app)
+        .post('/api/signup')
+        .send({ name: 'teste' })
 
-    //   expect(status).toBe(400)
-    //   expect(body.error).toBe(new RequiredFieldError('email').message)
+      expect(status).toBe(400)
+      expect(body.error).toBe(new RequiredFieldError('email').message)
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 'teste' })
-    //     .expect(400, { error: new RequiredFieldError('password').message })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'teste' })
+        .expect(400, { error: new RequiredFieldError('password').message })
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 'teste', password: '123456' })
-    //     .expect(400, { error: new RequiredFieldError('passwordConfirmation').message })
-    // })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'teste', password: '123456' })
+        .expect(400, { error: new RequiredFieldError('passwordConfirmation').message })
+    })
 
-    // it('should return 400 with InvalidPararError', async () => {
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'any_email', name: 'teste' })
-    //     .expect(400, { error: new InvalidParamError('email').message })
+    it('should return 400 with InvalidPararError', async () => {
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'any_email', name: 'teste' })
+        .expect(400, { error: new InvalidParamError('email').message })
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 'teste', password: '123456', passwordConfirmation: '12345678' })
-    //     .expect(400, { error: new InvalidParamError('passwordConfirmation').message })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'teste', password: '123456', passwordConfirmation: '12345678' })
+        .expect(400, { error: new InvalidParamError('passwordConfirmation').message })
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 2, password: '123456', passwordConfirmation: '12345678' })
-    //     .expect(400, { error: new InvalidParamError('name').message })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 2, password: '123456', passwordConfirmation: '12345678' })
+        .expect(400, { error: new InvalidParamError('name').message })
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 'teste', password: 123456, passwordConfirmation: '12345678' })
-    //     .expect(400, { error: new InvalidParamError('password').message })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'teste', password: 123456, passwordConfirmation: '12345678' })
+        .expect(400, { error: new InvalidParamError('password').message })
 
-    //   await request(app)
-    //     .post('/api/signup')
-    //     .send({ email: 'teste@teste.com', name: 'teste', password: '123456', passwordConfirmation: 12345678 })
-    //     .expect(400, { error: new InvalidParamError('passwordConfirmation').message })
-    // })
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'teste', password: '123456', passwordConfirmation: 12345678 })
+        .expect(400, { error: new InvalidParamError('passwordConfirmation').message })
+    })
   })
 })
