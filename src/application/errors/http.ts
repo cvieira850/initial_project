@@ -14,13 +14,6 @@ export class RequiredFieldError extends Error {
   }
 }
 
-export class ResetPasswordError extends Error {
-  constructor () {
-    super('This email is not registered')
-    this.name = 'ResetPasswordError'
-  }
-}
-
 export class InvalidParamError extends Error {
   constructor (paramName: string) {
     super(`Invalid param: ${paramName}`)
@@ -32,12 +25,5 @@ export class UnauthorizedError extends Error {
   constructor () {
     super('Unauthorized')
     this.name = 'UnauthorizedError'
-  }
-}
-
-export class ForbiddenError extends Error {
-  constructor () {
-    super('Access denied')
-    this.name = 'ForbiddenError'
   }
 }
