@@ -69,7 +69,7 @@ describe('Signup Route', () => {
     it('should return 400 with InvalidPararError', async () => {
       await request(app)
         .post('/api/signup')
-        .send({ email: 'teste', name: 'teste' })
+        .send({ email: 'any_email', name: 'teste' })
         .expect(400, { error: new InvalidParamError('email').message })
 
       await request(app)

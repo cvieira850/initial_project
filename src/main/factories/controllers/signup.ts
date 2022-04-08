@@ -1,6 +1,8 @@
-import { SignupController } from '@/application/controllers'
+import { Controller, SignupController } from '@/application/controllers'
+import { makePgTransactionController } from '../decorators'
 import { makeSignupService } from '../services'
 
-export const makeSignupController = (): SignupController => {
-  return new SignupController(makeSignupService())
+export const makeSignupController = (): Controller => {
+  const controller = new SignupController(makeSignupService())
+  return makePgTransactionController(controller)
 }
