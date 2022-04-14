@@ -1,11 +1,13 @@
 import { LoadAccountByEmailRepository } from '@/data/protocols/db'
 import { AuthenticationService } from '@/data/services'
+import { HashComparer } from '@/data/protocols/cryptography'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('Authentication Service', () => {
   let sut: AuthenticationService
   let accountRepo: MockProxy<LoadAccountByEmailRepository>
+  let hashComparer: MockProxy<HashComparer>
   let email: string
   let password: string
 
@@ -13,15 +15,20 @@ describe('Authentication Service', () => {
     email = 'any_email'
     password = 'any_password'
     accountRepo = mock()
+    hashComparer = mock()
     accountRepo.loadByEmail.mockResolvedValue({
       id: 'any_id',
       name: 'any_name',
-      email
+      email,
+      password: 'hashed_password'
     })
+    hashComparer.compare.mockResolvedValue(true)
   })
+
   beforeEach(() => {
-    sut = new AuthenticationService(accountRepo)
+    sut = new AuthenticationService(accountRepo, hashComparer)
   })
+
   describe('Load Account By Email Repository', () => {
     it('Should call LoadAccountByEmailRepository with correct email', async () => {
       await sut.perform({ email, password })
@@ -44,6 +51,15 @@ describe('Authentication Service', () => {
       const promise = sut.perform({ email, password })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('HashComparer', () => {
+    it('Should call HashComparer once', async () => {
+      await sut.perform({ email, password })
+
+      expect(hashComparer.compare).toHaveBeenCalledWith({ plaintext: password, digest: 'hashed_password' })
+      expect(hashComparer.compare).toHaveBeenCalledTimes(1)
     })
   })
 })
