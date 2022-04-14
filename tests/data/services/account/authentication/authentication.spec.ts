@@ -29,5 +29,13 @@ describe('Authentication Service', () => {
       expect(accountRepo.loadByEmail).toHaveBeenCalledWith({ email })
       expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return undefined when LoadAccountByEmailRepository returns undefined', async () => {
+      accountRepo.loadByEmail.mockResolvedValue(undefined)
+
+      const result = await sut.perform({ email, password })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
