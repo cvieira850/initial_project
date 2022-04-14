@@ -31,11 +31,19 @@ describe('Authentication Service', () => {
     })
 
     it('Should return undefined when LoadAccountByEmailRepository returns undefined', async () => {
-      accountRepo.loadByEmail.mockResolvedValue(undefined)
+      accountRepo.loadByEmail.mockResolvedValueOnce(undefined)
 
       const result = await sut.perform({ email, password })
 
       expect(result).toBeUndefined()
+    })
+
+    it('Should rethrow if LoadAccountByEmailRepository throws', async () => {
+      accountRepo.loadByEmail.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, password })
+
+      await expect(promise).rejects.toThrow()
     })
   })
 })
