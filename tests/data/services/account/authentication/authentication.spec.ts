@@ -1,4 +1,4 @@
-import { LoadAccountByEmailRepository } from '@/data/protocols/db'
+import { LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '@/data/protocols/db'
 import { AuthenticationService } from '@/data/services'
 import { HashComparer, Encrypt } from '@/data/protocols/cryptography'
 
@@ -6,27 +6,37 @@ import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('Authentication Service', () => {
   let sut: AuthenticationService
-  let accountRepo: MockProxy<LoadAccountByEmailRepository>
+  let accountRepo: MockProxy<LoadAccountByEmailRepository & UpdateAccessTokenRepository>
   let hashComparer: MockProxy<HashComparer>
   let encrypt: MockProxy<Encrypt>
   let email: string
   let password: string
   let id: string
   let accessToken: string
+  let name: string
 
   beforeAll(() => {
     email = 'any_email'
     password = 'any_password'
     id = 'any_id'
     accessToken = 'any_access_token'
+    name = 'any_name'
     accountRepo = mock()
     hashComparer = mock()
     encrypt = mock()
     accountRepo.loadByEmail.mockResolvedValue({
       id,
-      name: 'any_name',
+      name,
       email,
       password: 'hashed_password'
+    })
+    accountRepo.updateAccessToken.mockResolvedValue({
+      id,
+      name,
+      email,
+      password: 'hashed_password',
+      role: 'any_role',
+      access_token: accessToken
     })
     hashComparer.compare.mockResolvedValue(true)
     encrypt.encrypt.mockResolvedValue(accessToken)
@@ -99,6 +109,15 @@ describe('Authentication Service', () => {
       const promise = sut.perform({ email, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+  })
+
+  describe('Update Access Token Repository', () => {
+    it('Should call UpdateAccessTokenRepository with correct params', async () => {
+      await sut.perform({ email, password })
+
+      expect(accountRepo.updateAccessToken).toHaveBeenCalledWith({ id, accessToken })
+      expect(accountRepo.updateAccessToken).toHaveBeenCalledTimes(1)
     })
   })
 })
