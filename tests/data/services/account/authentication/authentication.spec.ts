@@ -69,5 +69,12 @@ describe('Authentication Service', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if HashComparer returns false', async () => {
+      hashComparer.compare.mockReturnValueOnce(Promise.resolve(false))
+      const result = await sut.perform({ email, password })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
