@@ -55,4 +55,13 @@ describe('Authentication Controller', () => {
       data: new ForbiddenError()
     })
   })
+
+  it('Should return 200 if Authentication succeeds', async () => {
+    const httpResponse = await sut.handle({ body: { email: 'teste@teste.com', password: 'user' } })
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: { accessToken }
+    })
+  })
 })
