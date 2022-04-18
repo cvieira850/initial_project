@@ -119,5 +119,12 @@ describe('Authentication Service', () => {
       expect(accountRepo.updateAccessToken).toHaveBeenCalledWith({ id, accessToken })
       expect(accountRepo.updateAccessToken).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return undefined when UpdateAccessTokenRepository returns undefined', async () => {
+      accountRepo.updateAccessToken.mockResolvedValueOnce(undefined)
+
+      const accountResult = await sut.perform({ email, password })
+      expect(accountResult).toEqual(undefined)
+    })
   })
 })
