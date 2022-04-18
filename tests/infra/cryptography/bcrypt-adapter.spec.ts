@@ -66,5 +66,13 @@ describe('BcryptAdapter', () => {
 
       expect(isValid).toBeFalsy()
     })
+
+    it('Should throw if compare throws', async () => {
+      fakeHash.compare.mockImplementationOnce(() => { throw new Error('bcrypt_error') })
+
+      const promise = sut.compare({ plaintext, digest })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
