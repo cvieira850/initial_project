@@ -13,7 +13,10 @@ export class AuthenticationService implements Authentication {
       const isValid = await this.hashComparer.compare({ plaintext: params.password, digest: account.password })
       if (isValid) {
         const accessToken = await this.encrypt.encrypt({ plaintext: account.id })
-        await this.accountRepo.updateAccessToken({ id: account.id, accessToken })
+        const accountUpdated = await this.accountRepo.updateAccessToken({ id: account.id, accessToken })
+        if (accountUpdated !== undefined) {
+          return { accessToken }
+        }
       }
     }
     return undefined
