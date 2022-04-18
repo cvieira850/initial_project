@@ -3,7 +3,7 @@ import { AuthenticationController } from '@/application/controllers'
 import { Authentication } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
-import { ForbiddenError } from '@/application/errors'
+import { ForbiddenError, ServerError } from '@/application/errors'
 
 describe('Authentication Controller', () => {
   let sut: AuthenticationController
@@ -62,6 +62,18 @@ describe('Authentication Controller', () => {
     expect(httpResponse).toEqual({
       statusCode: 200,
       data: { accessToken }
+    })
+  })
+
+  it('Should return 500 if AddAccount throws', async () => {
+    const error = new Error('infra_error')
+    authentication.perform.mockRejectedValueOnce(error)
+
+    const httpResponse = await sut.handle({ body: { email: 'teste@teste.com', password: 'user' } })
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new ServerError(error)
     })
   })
 })
