@@ -1,8 +1,8 @@
-import { Authentication, LoadAccountByEmailRepository, HashComparer, Encrypt } from './authentication-protocols'
+import { Authentication, LoadAccountByEmailRepository, UpdateAccessTokenRepository, HashComparer, Encrypt } from './authentication-protocols'
 
 export class AuthenticationService implements Authentication {
   constructor (
-    private readonly accountRepo: LoadAccountByEmailRepository,
+    private readonly accountRepo: LoadAccountByEmailRepository & UpdateAccessTokenRepository,
     private readonly hashComparer: HashComparer,
     private readonly encrypt: Encrypt
   ) {}
@@ -12,7 +12,8 @@ export class AuthenticationService implements Authentication {
     if (account !== undefined) {
       const isValid = await this.hashComparer.compare({ plaintext: params.password, digest: account.password })
       if (isValid) {
-        await this.encrypt.encrypt({ plaintext: account.id })
+        const accessToken = await this.encrypt.encrypt({ plaintext: account.id })
+        await this.accountRepo.updateAccessToken({ id: account.id, accessToken })
       }
     }
     return undefined
