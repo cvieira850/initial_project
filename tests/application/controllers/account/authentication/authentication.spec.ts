@@ -36,4 +36,11 @@ describe('Authentication Controller', () => {
       new StringValidator(password, 'password')
     ])
   })
+
+  it('Should call Authentication with correct values', async () => {
+    await sut.handle({ body: { email: 'teste@teste.com', password: 'user' } })
+
+    expect(authentication.perform).toHaveBeenCalledWith({ email: 'teste@teste.com', password: 'user' })
+    expect(authentication.perform).toHaveBeenCalledTimes(1)
+  })
 })
