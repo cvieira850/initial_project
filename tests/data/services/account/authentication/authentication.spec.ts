@@ -92,5 +92,13 @@ describe('Authentication Service', () => {
       expect(encrypt.encrypt).toHaveBeenCalledWith({ plaintext: id })
       expect(encrypt.encrypt).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if Encrypt throws', async () => {
+      encrypt.encrypt.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
