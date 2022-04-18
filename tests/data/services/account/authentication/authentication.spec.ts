@@ -126,5 +126,13 @@ describe('Authentication Service', () => {
       const accountResult = await sut.perform({ email, password })
       expect(accountResult).toEqual(undefined)
     })
+
+    it('Should rethrow if UpdateAccessTokenRepository throws', async () => {
+      accountRepo.updateAccessToken.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
