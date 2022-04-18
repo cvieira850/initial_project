@@ -1,6 +1,6 @@
 import { Controller } from '@/application/controllers'
 import { Authentication } from '@/domain/usecases'
-import { HttpRequest, HttpResponse, forbidden } from '@/application/helpers'
+import { HttpRequest, HttpResponse, forbidden, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 
 type Model = Error | {
@@ -13,9 +13,8 @@ export class AuthenticationController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
-    await this.authentication.perform({ email: httpRequest.body.email, password: httpRequest.body.password })
-
-    return forbidden()
+    const result = await this.authentication.perform({ email: httpRequest.body.email, password: httpRequest.body.password })
+    return (result === undefined) ? forbidden() : ok({ accessToken: result.accessToken })
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
