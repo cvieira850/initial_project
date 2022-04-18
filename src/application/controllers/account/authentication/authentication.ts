@@ -13,6 +13,8 @@ export class AuthenticationController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
+    await this.authentication.perform({ email: httpRequest.body.email, password: httpRequest.body.password })
+
     return forbidden()
   }
 
