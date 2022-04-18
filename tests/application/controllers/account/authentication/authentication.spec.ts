@@ -3,6 +3,7 @@ import { AuthenticationController } from '@/application/controllers'
 import { Authentication } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
+import { ForbiddenError } from '@/application/errors'
 
 describe('Authentication Controller', () => {
   let sut: AuthenticationController
@@ -42,5 +43,16 @@ describe('Authentication Controller', () => {
 
     expect(authentication.perform).toHaveBeenCalledWith({ email: 'teste@teste.com', password: 'user' })
     expect(authentication.perform).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return 403 if Authentication fails', async () => {
+    authentication.perform.mockResolvedValueOnce(undefined)
+
+    const httpResponse = await sut.handle({ body: { email: 'teste@teste.com', password: 'user' } })
+
+    expect(httpResponse).toEqual({
+      statusCode: 403,
+      data: new ForbiddenError()
+    })
   })
 })
