@@ -89,6 +89,7 @@ describe('Authentication Service', () => {
 
     it('Should return undefined if HashComparer returns false', async () => {
       hashComparer.compare.mockReturnValueOnce(Promise.resolve(false))
+
       const result = await sut.perform({ email, password })
 
       expect(result).toBeUndefined()
@@ -124,6 +125,7 @@ describe('Authentication Service', () => {
       accountRepo.updateAccessToken.mockResolvedValueOnce(undefined)
 
       const accountResult = await sut.perform({ email, password })
+
       expect(accountResult).toEqual(undefined)
     })
 
@@ -133,6 +135,12 @@ describe('Authentication Service', () => {
       const promise = sut.perform({ email, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+
+    it('Should return return accessToken on  success', async () => {
+      const accountResult = await sut.perform({ email, password })
+
+      expect(accountResult).toEqual({ accessToken })
     })
   })
 })
