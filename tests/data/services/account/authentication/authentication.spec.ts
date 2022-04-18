@@ -61,5 +61,13 @@ describe('Authentication Service', () => {
       expect(hashComparer.compare).toHaveBeenCalledWith({ plaintext: password, digest: 'hashed_password' })
       expect(hashComparer.compare).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if HashComparer throws', async () => {
+      hashComparer.compare.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ email, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
