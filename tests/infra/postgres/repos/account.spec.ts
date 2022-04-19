@@ -37,7 +37,7 @@ describe('AccountPgRepository', () => {
 
       const account = await sut.loadByEmail({ email: 'any_email' })
 
-      expect(account).toEqual({ id: '1',  name: 'any_name', email: 'any_email',  })
+      expect(account).toEqual({ id: '1',  name: 'any_name', email: 'any_email', password: '1234' })
     })
 
     it('Should return undefined if email does not exists', async () => {

@@ -1,4 +1,4 @@
-import { Account } from '@/domain/models'
+import { LoadAccount } from '@/domain/models'
 
 export interface LoadAccountByEmailRepository {
   loadByEmail: (params: LoadAccountByEmailRepository.Params) => Promise<LoadAccountByEmailRepository.Result>
@@ -9,5 +9,5 @@ export namespace LoadAccountByEmailRepository {
     email: string
   }
 
-  export type Result = Account | undefined
+  export type Result = LoadAccount | undefined
 }

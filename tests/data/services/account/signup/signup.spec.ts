@@ -59,7 +59,8 @@ describe('SignupService', () => {
       accountRepo.loadByEmail.mockResolvedValueOnce({
         id: 'any_id',
         name: 'any_name',
-        email: 'any_email'
+        email: 'any_email',
+        password: 'any_password'
       })
 
       const result = await sut.perform({ email, name, password })
