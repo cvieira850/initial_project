@@ -21,7 +21,8 @@ export class PgAccountRepository extends PgRepository implements
       return {
         id: pgUser.id.toString(),
         name: pgUser.name,
-        email: pgUser.email
+        email: pgUser.email,
+        password: pgUser.password,
       }
     }
   }

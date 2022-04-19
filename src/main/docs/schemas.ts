@@ -1,11 +1,13 @@
 import {
   signupParamsSchema,
   errorSchema,
-  loginSchema
+  loginSchema,
+  loginParamsSchema
 } from './schemas/'
 
 export default {
   login: loginSchema,
   error: errorSchema,
-  signupParamsSchema: signupParamsSchema
+  signupParamsSchema: signupParamsSchema,
+  loginParams: loginParamsSchema
 }
