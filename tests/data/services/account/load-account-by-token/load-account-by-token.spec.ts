@@ -27,5 +27,13 @@ describe('LoadAccountByTokenService', () => {
       expect(decripter.decrypt).toHaveBeenCalledWith({ ciphertext: accessToken })
       expect(decripter.decrypt).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if Decrypter throws', async () => {
+      decripter.decrypt.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ accessToken, role })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
