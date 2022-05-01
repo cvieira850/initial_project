@@ -21,7 +21,17 @@ describe('Auth Middlewares', () => {
 
   it('Should return 403 if no x-access-token exists in headers', async () => {
     sut = new AuthMiddleware(loadAccountByToken)
+
     const response = await sut.handle({ headers: {} })
+
+    expect(response).toEqual(forbidden())
+  })
+
+  it('Should return 403 if x-access-token is invalid', async () => {
+    loadAccountByToken.perform.mockResolvedValueOnce(undefined)
+    sut = new AuthMiddleware(loadAccountByToken)
+
+    const response = await sut.handle({ headers: { 'x-access-token': 'invalid_token' } })
 
     expect(response).toEqual(forbidden())
   })
