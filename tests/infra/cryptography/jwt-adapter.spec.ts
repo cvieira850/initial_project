@@ -54,5 +54,13 @@ describe('Jwt Adapter', () => {
       const accessToken = await sut.decrypt({ ciphertext })
       expect(accessToken).toBe('any_value')
     })
+
+    it('Should throw if decrypt throws', async () => {
+      fakeCompare.verify.mockImplementation(() => { throw new Error('jwt_error') })
+
+      const promise = sut.decrypt({ ciphertext })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
