@@ -63,5 +63,13 @@ describe('LoadAccountByTokenService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if LoadAccountByTokenRepository returns undefined', async () => {
+      loadAccountByTokenRepository.loadByToken.mockResolvedValueOnce(undefined)
+
+      const promise = sut.perform({ accessToken, role })
+
+      await expect(promise).resolves.toBeUndefined()
+    })
   })
 })
