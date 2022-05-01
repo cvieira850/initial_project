@@ -72,4 +72,45 @@ describe('AccountPgRepository', () => {
       expect(updatedUser).toEqual({ id: '1', name: 'any_name', email: 'any_email', access_token: 'any_token' })
     })
   })
+
+  describe('LoadAccountByToken', () => {
+    it('Should return an account lo loadAccountByToken without role', async () => {
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token' })
+
+      expect(user).toEqual({ id: '1', name: 'any_name', role: 'user', email: 'any_email', password: '1234', access_token: 'any_token' })
+    })
+
+    it('Should return an account on loadAccountByToken with role', async () => {
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name',  role: 'user', password: '1234', access_token: 'any_token' })
+      const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
+
+      expect(user).toEqual({ id: '1', role: 'user',name: 'any_name',  email: 'any_email', password: '1234', access_token: 'any_token' })
+    })
+
+    it('Should return undefined on loadAccountByToken with role admin on account role user', async () => {
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name', role: 'user', password: '1234', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token', role: 'admin' })
+
+      expect(user).toBeUndefined()
+    })
+
+    it('Should return undefined on loadAccountByToken with role user on account role admin', async () => {
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role: 'admin', password: '1234', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
+
+      expect(user).toEqual({ id: '1',name: 'any_name' , role: 'admin', email: 'any_email', password: '1234', access_token: 'any_token' })
+    })
+
+    it('Should return undefined on loadAccountByToken with role admin on account role sysAdmin', async () => {
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role: 'sysAdmin', password: '1234', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
+
+      expect(user).toEqual({ id: '1',name: 'any_name' , role: 'sysAdmin', email: 'any_email', password: '1234', access_token: 'any_token' })
+    })
+  });
 })
