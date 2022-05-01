@@ -58,4 +58,10 @@ describe('Auth Middlewares', () => {
 
     expect(response).toEqual({ statusCode: 200, data: { accountId: 'any_id' } })
   })
+  it('Should return 200 with role if x-access-token is valid', async () => {
+    sut = new AuthMiddleware(loadAccountByToken, 'any_role')
+    const response = await sut.handle({ headers: { 'x-access-token': 'valid_token' } })
+
+    expect(response).toEqual({ statusCode: 200, data: { accountId: 'any_id' } })
+  })
 })
