@@ -71,5 +71,18 @@ describe('LoadAccountByTokenService', () => {
 
       await expect(promise).resolves.toBeUndefined()
     })
+
+    it('Should return AccountCreated on LoadAccountByTokenRepository success', async () => {
+      const loadedAccount = await sut.perform({ accessToken, role })
+
+      expect(loadedAccount).toEqual({
+        id: 'any_id',
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+        role: 'any_role',
+        access_token: 'any_token'
+      })
+    })
   })
 })
