@@ -9,7 +9,7 @@ export class LoadAccountByTokenService implements LoadAccountByToken {
   async perform (params: LoadAccountByToken.Params): Promise<LoadAccountByToken.Result> {
     const tokenDecripted = await this.decrypter.decrypt({ ciphertext: params.accessToken })
     if (tokenDecripted) {
-      await this.loadAccountByTokenRepository.loadByToken({ accessToken: params.accessToken, role: params.role })
+      return await this.loadAccountByTokenRepository.loadByToken({ accessToken: params.accessToken, role: params.role })
     }
     return undefined
   }
