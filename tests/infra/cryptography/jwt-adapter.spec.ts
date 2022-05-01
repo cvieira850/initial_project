@@ -49,5 +49,10 @@ describe('Jwt Adapter', () => {
 
       expect(fakeCompare.verify).toHaveBeenCalledWith(ciphertext, secret)
     })
+
+    it('Should return a token on verify success', async () => {
+      const accessToken = await sut.decrypt({ ciphertext })
+      expect(accessToken).toBe('any_value')
+    })
   })
 })
