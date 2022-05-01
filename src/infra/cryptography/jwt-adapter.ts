@@ -1,4 +1,4 @@
-import { Encrypt } from '@/data/protocols/cryptography/encrypt'
+import { Encrypt, Decrypter } from '@/data/protocols/cryptography'
 import jwt from 'jsonwebtoken'
 
 export class JwtAdapter implements Encrypt {
@@ -6,5 +6,9 @@ export class JwtAdapter implements Encrypt {
 
   async encrypt (params: Encrypt.Params): Promise<Encrypt.Result> {
     return await jwt.sign({ id: params.plaintext }, this.secret)
+  }
+
+  async decrypt (params: Decrypter.Params): Promise<string> {
+    return await jwt.verify(params.ciphertext, this.secret) as string
   }
 }
