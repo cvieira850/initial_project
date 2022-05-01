@@ -43,4 +43,12 @@ describe('Auth Middlewares', () => {
     expect(loadAccountByToken.perform).toHaveBeenCalledWith({ accessToken: 'valid_token', role: undefined })
     expect(loadAccountByToken.perform).toHaveBeenCalledTimes(1)
   })
+
+  it('Should call LoadAccountByToken with correct values', async () => {
+    sut = new AuthMiddleware(loadAccountByToken, 'any_role')
+    await sut.handle({ headers: { 'x-access-token': 'valid_token' } })
+
+    expect(loadAccountByToken.perform).toHaveBeenCalledWith({ accessToken: 'valid_token', role: 'any_role' })
+    expect(loadAccountByToken.perform).toHaveBeenCalledTimes(1)
+  })
 })
