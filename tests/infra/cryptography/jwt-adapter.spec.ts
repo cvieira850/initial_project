@@ -9,12 +9,15 @@ describe('Jwt Adapter', () => {
   let secret: string
   let fakeCompare: jest.Mocked<typeof jwt>
   let plaintext: string
+  let ciphertext: string
 
   beforeAll(() => {
     fakeCompare = jwt as jest.Mocked<typeof jwt>
     fakeCompare.sign.mockImplementation(() => 'any_hash')
+    fakeCompare.verify.mockImplementation(() => 'any_value')
     secret = 'secret'
     plaintext = 'any_plaintext'
+    ciphertext = 'any_token'
   })
   beforeEach(() => {
     sut = new JwtAdapter(secret)
@@ -35,6 +38,27 @@ describe('Jwt Adapter', () => {
       fakeCompare.sign.mockImplementation(() => { throw new Error('jwt_error') })
 
       const promise = sut.encrypt({ plaintext })
+
+      await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('Verify', () => {
+    it('Should call verify with correct values', async () => {
+      await sut.decrypt({ ciphertext })
+
+      expect(fakeCompare.verify).toHaveBeenCalledWith(ciphertext, secret)
+    })
+
+    it('Should return a token on verify success', async () => {
+      const accessToken = await sut.decrypt({ ciphertext })
+      expect(accessToken).toBe('any_value')
+    })
+
+    it('Should throw if decrypt throws', async () => {
+      fakeCompare.verify.mockImplementation(() => { throw new Error('jwt_error') })
+
+      const promise = sut.decrypt({ ciphertext })
 
       await expect(promise).rejects.toThrow()
     })
