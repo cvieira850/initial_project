@@ -88,5 +88,13 @@ describe('AccountPgRepository', () => {
 
       expect(user).toEqual({ id: '1', role: 'user',name: 'any_name',  email: 'any_email', password: '1234', access_token: 'any_token' })
     })
+
+    it('Should return undefined on loadAccountByToken with role admin on account role user', async () => {
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name', role: 'user', password: '1234', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token', role: 'admin' })
+
+      expect(user).toBeUndefined()
+    })
   });
 })
