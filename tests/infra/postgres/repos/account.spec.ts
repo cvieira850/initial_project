@@ -72,4 +72,14 @@ describe('AccountPgRepository', () => {
       expect(updatedUser).toEqual({ id: '1', name: 'any_name', email: 'any_email', access_token: 'any_token' })
     })
   })
+
+  describe('LoadAccountByToken', () => {
+    it('Should return an account lo loadAccountByToken without role', async () => {
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user', access_token: 'any_token' })
+
+      const user = await sut.loadByToken({ accessToken: 'any_token' })
+
+      expect(user).toEqual({ id: '1', name: 'any_name', role: 'user', email: 'any_email', password: '1234', access_token: 'any_token' })
+    })
+  });
 })
