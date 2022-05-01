@@ -55,5 +55,13 @@ describe('LoadAccountByTokenService', () => {
       expect(loadAccountByTokenRepository.loadByToken).toHaveBeenCalledWith({ accessToken, role })
       expect(loadAccountByTokenRepository.loadByToken).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if LoadAccountByTokenRepository throws', async () => {
+      loadAccountByTokenRepository.loadByToken.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ accessToken, role })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
