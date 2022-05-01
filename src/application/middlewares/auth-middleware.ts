@@ -1,5 +1,5 @@
 import { Middleware } from '@/application/middlewares'
-import { HttpRequest, HttpResponse, forbidden } from '@/application/helpers'
+import { HttpRequest, HttpResponse, ok, forbidden } from '@/application/helpers'
 import { LoadAccountByToken } from '@/domain/usecases'
 
 export class AuthMiddleware implements Middleware {
@@ -11,7 +11,10 @@ export class AuthMiddleware implements Middleware {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     const accessToken = httpRequest.headers['x-access-token']
     if (accessToken) {
-      await this.loadAccountByToken.perform({ accessToken, role: this.role })
+      const account = await this.loadAccountByToken.perform({ accessToken, role: this.role })
+      if (account) {
+        return ok({ accountId: account.id })
+      }
     }
     return forbidden()
   }
