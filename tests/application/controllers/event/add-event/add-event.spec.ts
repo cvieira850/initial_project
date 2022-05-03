@@ -3,6 +3,7 @@ import { AddEvent } from '@/domain/usecases'
 import { RequiredStringValidator, StringValidator } from '@/application/validation'
 
 import { mock, MockProxy } from 'jest-mock-extended'
+import { UnauthorizedError } from '@/application/errors'
 
 describe('AddEventController', () => {
   let sut: AddEventController
@@ -59,6 +60,17 @@ describe('AddEventController', () => {
         userId: accountId,
         name,
         description
+      })
+    })
+
+    it('Should return 401 if AddEvent fails', async () => {
+      addEvent.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ headers: { accountId }, body: { name, description } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
       })
     })
   })

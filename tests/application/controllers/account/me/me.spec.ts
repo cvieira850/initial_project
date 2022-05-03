@@ -49,7 +49,7 @@ describe('Me Controller', () => {
       expect(loadAccountById.perform).toHaveBeenCalledTimes(1)
     })
 
-    it('Should return 403 if LoadAccountById fails', async () => {
+    it('Should return 201 if LoadAccountById fails', async () => {
       loadAccountById.perform.mockResolvedValueOnce(undefined)
 
       const httpResponse = await sut.handle({ headers: { accountId } })
