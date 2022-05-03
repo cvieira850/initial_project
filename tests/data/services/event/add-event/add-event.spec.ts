@@ -81,5 +81,13 @@ describe('AddEventService', () => {
         created_at: expect.any(Date)
       })
     })
+
+    it('Should rethrow if AddEventRepository throws', async () => {
+      eventRepo.add.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ name, userId, description })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
