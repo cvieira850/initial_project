@@ -39,5 +39,12 @@ describe('Me Route', () => {
       expect(response.body.accessToken).toBe(body.accessToken)
       expect(response.body.id).toBeTruthy()
     })
+
+    it('should return 403 if no AccessToken was given', async () => {
+      const response = await request(app)
+        .get('/api/me')
+
+      expect(response.status).toBe(403)
+    })
   })
 })
