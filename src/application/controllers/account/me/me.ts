@@ -1,13 +1,19 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, noContent } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
+import { LoadAccountById } from '@/domain/usecases'
 
 export class MeController extends Controller {
-  async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    throw new Error('Method not implemented.')
+  constructor (private readonly loadAccountById: LoadAccountById) {
+    super()
   }
 
-  buildValidators (httpRequest: HttpRequest): Validator[] {
+  async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
+    await this.loadAccountById.perform({ id: httpRequest.headers.accountId })
+    return noContent()
+  }
+
+  override buildValidators (httpRequest: HttpRequest): Validator[] {
     return [
       ...Builder.of({ value: httpRequest.headers.accountId, fieldName: 'accountId' }).required().string().build()
     ]
