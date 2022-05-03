@@ -56,11 +56,12 @@ describe('Jwt Adapter', () => {
     })
 
     it('Should throw if decrypt throws', async () => {
-      fakeCompare.verify.mockImplementation(() => { throw new Error('jwt_error') })
+      const error = new Error('Invalid token')
+      fakeCompare.verify.mockImplementation(() => { throw error })
 
-      const promise = sut.decrypt({ ciphertext })
+      const response = await sut.decrypt({ ciphertext })
 
-      await expect(promise).rejects.toThrow()
+      expect(response).toEqual(error)
     })
   })
 })

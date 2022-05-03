@@ -1,6 +1,5 @@
-import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from "@/data/protocols/db";
+import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository } from "@/data/protocols/db";
 import { User } from "@/infra/postgres/entities";
-import { PgConnection } from "@/infra/postgres/helpers";
 import { PgRepository } from "./repository";
 
 type LoadParams = LoadAccountByEmailRepository.Params
@@ -12,7 +11,8 @@ export class PgAccountRepository extends PgRepository implements
   LoadAccountByEmailRepository,
   AddAccountRepository,
   UpdateAccessTokenRepository,
-  LoadAccountByTokenRepository
+  LoadAccountByTokenRepository,
+  LoadAccountByIdRepository
 {
 
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
@@ -89,5 +89,17 @@ export class PgAccountRepository extends PgRepository implements
     return undefined
   }
 
-
+  async loadById (params: LoadAccountByIdRepository.Params): Promise<LoadAccountByIdRepository.Result> {
+    const pgUserRepo = this.getRepository(User)
+    const pgUser =  await pgUserRepo.findOne({id: params.id})
+    if(pgUser) {
+      return {
+        id: pgUser.id.toString(),
+        name: pgUser.name,
+        email: pgUser.email,
+        role: pgUser.role,
+        access_token: pgUser.access_token
+      }
+    }
+  }
 }

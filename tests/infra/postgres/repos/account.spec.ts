@@ -113,4 +113,20 @@ describe('AccountPgRepository', () => {
       expect(user).toEqual({ id: '1',name: 'any_name' , role: 'sysAdmin', email: 'any_email', password: '1234', access_token: 'any_token' })
     })
   });
+
+  describe('loadById', () => {
+    it('Should return an account on loadById', async () => {
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user' })
+
+      const user = await sut.loadById({ id: '1' })
+
+      expect(user).toEqual({ id: '1', name: 'any_name', role: 'user', email: 'any_email', "access_token": null })
+    })
+
+    it('Should return undefined if loadById dont return a user', async () => {
+      const user = await sut.loadById({ id: '1' })
+
+      expect(user).toBeUndefined()
+    })
+  })
 })

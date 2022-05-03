@@ -8,7 +8,11 @@ export class JwtAdapter implements Encrypt {
     return await jwt.sign({ id: params.plaintext }, this.secret)
   }
 
-  async decrypt (params: Decrypter.Params): Promise<string> {
-    return await jwt.verify(params.ciphertext, this.secret) as string
+  async decrypt (params: Decrypter.Params): Promise<Decrypter.Result> {
+    try {
+      return await jwt.verify(params.ciphertext, this.secret) as string
+    } catch (error) {
+      return new Error('Invalid token')
+    }
   }
 }
