@@ -73,5 +73,19 @@ describe('AddEventController', () => {
         data: new UnauthorizedError()
       })
     })
+    it('Should return 200 if AddEvent succeeds', async () => {
+      const httpResponse = await sut.handle({ headers: { accountId }, body: { name, description } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id: accountId,
+          name,
+          description,
+          user_id: accountId,
+          created_at: expect.any(Date)
+        }
+      })
+    })
   })
 })
