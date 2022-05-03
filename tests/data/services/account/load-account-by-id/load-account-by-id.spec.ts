@@ -28,4 +28,12 @@ describe('LoadAccountByIdService', () => {
     expect(loadAccountByIdRepository.loadById).toHaveBeenCalledWith({ id })
     expect(loadAccountByIdRepository.loadById).toHaveBeenCalledTimes(1)
   })
+
+  it('Should rethrow if LoadAccountByTokenRepository throws', async () => {
+    loadAccountByIdRepository.loadById.mockRejectedValueOnce(new Error())
+
+    const promise = sut.perform({ id })
+
+    await expect(promise).rejects.toThrow(new Error())
+  })
 })
