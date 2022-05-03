@@ -6,7 +6,7 @@ export interface LoadAccountById {
 
 export namespace LoadAccountById {
   export type Params = {
-    accessToken: string
+    id: string
   }
 
   export type Result = Account | undefined
