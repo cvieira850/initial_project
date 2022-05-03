@@ -1,12 +1,19 @@
-import { LoadEventByNameRepository, AddEvent } from './add-event-protocols'
+import { LoadEventByNameRepository, AddEvent, AddEventRepository } from './add-event-protocols'
 
 export class AddEventService implements AddEvent {
   constructor (
-    private readonly loadEventByNameRepository: LoadEventByNameRepository
+    private readonly eventRepo: LoadEventByNameRepository & AddEventRepository
   ) {}
 
   async perform (params: AddEvent.Params): Promise<AddEvent.Result> {
-    await this.loadEventByNameRepository.loadByName({ name: params.name, userId: params.userId })
+    const event = await this.eventRepo.loadByName({ name: params.name, userId: params.userId })
+    if (!event) {
+      return await this.eventRepo.add({
+        name: params.name,
+        userId: params.userId,
+        description: params.description
+      })
+    }
     return undefined
   }
 }
