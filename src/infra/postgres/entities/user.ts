@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedCol
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
-  id!: number
+  id!: string
 
   @Column()
   name!: string
