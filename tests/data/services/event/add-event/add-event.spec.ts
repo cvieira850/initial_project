@@ -1,11 +1,11 @@
 import { AddEventService } from '@/data/services'
-import { LoadEventByNameRepository } from '@/data/protocols/db'
+import { LoadEventByNameRepository, AddEventRepository } from '@/data/protocols/db'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('AddEventService', () => {
   let sut: AddEventService
-  let eventRepo: MockProxy<LoadEventByNameRepository>
+  let eventRepo: MockProxy<LoadEventByNameRepository & AddEventRepository>
   let id: string
   let name: string
   let userId: string
@@ -18,13 +18,20 @@ describe('AddEventService', () => {
     userId = 'any_user_id'
     eventRepo = mock()
     eventRepo.loadByName.mockResolvedValue(undefined)
+    eventRepo.add.mockResolvedValue({
+      id,
+      name,
+      user_id: userId,
+      description,
+      created_at: new Date()
+    })
   })
 
   beforeEach(() => {
     sut = new AddEventService(eventRepo)
   })
 
-  describe('LoadEventByNameRepository Repository', () => {
+  describe('LoadEventByNameRepository', () => {
     it('Should call LoadEventByNameRepository with correct values', async () => {
       await sut.perform({ name, userId, description })
 
@@ -52,6 +59,27 @@ describe('AddEventService', () => {
       const promise = sut.perform({ name, userId, description })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('AddEventRepository', () => {
+    it('Should call AddEventRepository with correct values', async () => {
+      await sut.perform({ name, userId, description })
+
+      expect(eventRepo.add).toHaveBeenCalledWith({ name, userId, description })
+      expect(eventRepo.add).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return an event on success', async () => {
+      const result = await sut.perform({ name, userId, description })
+
+      expect(result).toEqual({
+        id,
+        name,
+        description,
+        user_id: userId,
+        created_at: expect.any(Date)
+      })
     })
   })
 })
