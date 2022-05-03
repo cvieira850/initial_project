@@ -45,5 +45,13 @@ describe('AddEventService', () => {
 
       expect(result).toBeUndefined()
     })
+
+    it('Should rethrow if LoadEventByNameRepository throws', async () => {
+      eventRepo.loadByName.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ name, userId, description })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
