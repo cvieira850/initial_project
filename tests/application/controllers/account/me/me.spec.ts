@@ -48,5 +48,16 @@ describe('Me Controller', () => {
       expect(loadAccountById.perform).toHaveBeenCalledWith({ id: accountId })
       expect(loadAccountById.perform).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return 403 if LoadAccountById fails', async () => {
+      loadAccountById.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ headers: { accountId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 201,
+        data: null
+      })
+    })
   })
 })
