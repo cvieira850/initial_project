@@ -2,6 +2,6 @@ export interface Event {
   id: string
   name: string
   description: string
-  userId: string
-  createdAt: Date
+  user_id: string
+  created_at: Date
 }
