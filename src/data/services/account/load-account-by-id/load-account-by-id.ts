@@ -6,7 +6,6 @@ export class LoadAccountByIdService implements LoadAccountById {
   ) {}
 
   async perform (params: LoadAccountById.Params): Promise<LoadAccountById.Result> {
-    await this.loadAccountByIdRepository.loadById({ id: params.id })
-    return undefined
+    return await this.loadAccountByIdRepository.loadById({ id: params.id })
   }
 }
