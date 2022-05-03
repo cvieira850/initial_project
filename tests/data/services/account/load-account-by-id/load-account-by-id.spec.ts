@@ -36,4 +36,12 @@ describe('LoadAccountByIdService', () => {
 
     await expect(promise).rejects.toThrow(new Error())
   })
+
+  it('Should return undefined if LoadAccountByTokenRepository returns undefined', async () => {
+    loadAccountByIdRepository.loadById.mockResolvedValueOnce(undefined)
+
+    const promise = sut.perform({ id })
+
+    await expect(promise).resolves.toBeUndefined()
+  })
 })
