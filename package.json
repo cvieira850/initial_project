@@ -10,12 +10,12 @@
     "lint": "eslint .",
     "lint:fix": "yarn lint --fix",
     "test": "jest --passWithNoTests --no-cache --runInBand",
-    "test:watch": "yarn test --watch",
-    "test:staged": "yarn test --findRelatedTests",
-    "test:coverage": "yarn test --coverage",
+    "test:watch": "yarn test --silent --watch",
+    "test:staged": "yarn test --silent --noStackTrace --findRelatedTests",
+    "test:coverage": "yarn test --silent --noStackTrace --coverage",
     "test:integration": "yarn test -c ./jest.integration.config.js",
     "typeorm": "ts-node-dev  -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "test:ci": "yarn test --coverage",
+    "test:ci": "yarn test --silent --noStackTrace --coverage",
     "check:dep": "yarn-check -s -u"
   },
   "dependencies": {
