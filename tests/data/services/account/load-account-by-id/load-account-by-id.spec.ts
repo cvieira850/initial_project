@@ -29,7 +29,7 @@ describe('LoadAccountByIdService', () => {
     expect(loadAccountByIdRepository.loadById).toHaveBeenCalledTimes(1)
   })
 
-  it('Should rethrow if LoadAccountByTokenRepository throws', async () => {
+  it('Should rethrow if LoadAccountByIdRepository throws', async () => {
     loadAccountByIdRepository.loadById.mockRejectedValueOnce(new Error())
 
     const promise = sut.perform({ id })
@@ -37,11 +37,22 @@ describe('LoadAccountByIdService', () => {
     await expect(promise).rejects.toThrow(new Error())
   })
 
-  it('Should return undefined if LoadAccountByTokenRepository returns undefined', async () => {
+  it('Should return undefined if LoadAccountByIdRepository returns undefined', async () => {
     loadAccountByIdRepository.loadById.mockResolvedValueOnce(undefined)
 
     const promise = sut.perform({ id })
 
     await expect(promise).resolves.toBeUndefined()
+  })
+
+  it('Should return Account on LoadAccountByIdRepository success', async () => {
+    const accountCreated = await sut.perform({ id })
+
+    expect(accountCreated).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email',
+      role: 'any_role'
+    })
   })
 })
