@@ -1,10 +1,23 @@
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
 import { Controller } from '@/application/controllers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
+import { AddEvent } from '@/domain/usecases'
 
 export class AddEventController extends Controller {
+  constructor (
+    private readonly addEvent: AddEvent
+  ) {
+    super()
+  }
+
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    throw new Error('Method not implemented.')
+    await this.addEvent.perform({
+      userId: httpRequest.headers.accountId,
+      name: httpRequest.body.name,
+      description: httpRequest.body.description
+    })
+
+    return unauthorized()
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
