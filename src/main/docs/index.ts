@@ -20,7 +20,7 @@ export default {
   tags: [{
     name: 'Account'
   }, {
-    name: 'StockQuote'
+    name: 'Event'
   }],
   paths,
   schemas,
