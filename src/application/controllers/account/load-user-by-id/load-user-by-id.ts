@@ -1,5 +1,5 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, noContent } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { LoadAccountById } from '@/domain/usecases'
 
@@ -18,7 +18,8 @@ export class LoadUserByIdController extends Controller {
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
     await this.loadAccountById.perform({ id: httpRequest.params.userId })
-    throw new Error('Method not implemented.')
+
+    return noContent()
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
