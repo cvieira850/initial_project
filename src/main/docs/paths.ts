@@ -1,9 +1,13 @@
 import {
   signupPath,
-  loginPath
+  loginPath,
+  mePath,
+  eventPath
 } from './paths/'
 
 export default {
   '/signup': signupPath,
-  '/signin': loginPath
+  '/signin': loginPath,
+  '/me': mePath,
+  '/event': eventPath
 }

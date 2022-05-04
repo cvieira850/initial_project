@@ -65,6 +65,8 @@ export class PgAccountRepository extends PgRepository implements
     const pgUser = await pgUserRepo.findOne({ access_token: params.accessToken })
     if (pgUser !== undefined) {
       if (params.role) {
+        console.log("esse é o role", params.role)
+        console.log("esse é o role do usuario", pgUser.role)
         if (pgUser.role === params.role || (pgUser.role === 'admin' && params.role === 'user') || (pgUser.role === 'sysAdmin')) {
           return {
             id: pgUser.id.toString(),
