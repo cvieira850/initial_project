@@ -1,9 +1,23 @@
 import { Controller } from '@/application/controllers'
 import { HttpRequest, HttpResponse } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
+import { LoadAccountById } from '@/domain/usecases'
+
+type Model = Error | {
+  id: string
+  name: string
+  email: string
+  role: string | undefined
+  accessToken: string | undefined
+}
 
 export class LoadUserByIdController extends Controller {
-  async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
+  constructor (private readonly loadAccountById: LoadAccountById) {
+    super()
+  }
+
+  async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
+    await this.loadAccountById.perform({ id: httpRequest.params.userId })
     throw new Error('Method not implemented.')
   }
 
