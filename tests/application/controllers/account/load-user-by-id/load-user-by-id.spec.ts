@@ -60,5 +60,20 @@ describe('LoadUserByIdController', () => {
         data: null
       })
     })
+
+    it('Should return 200 if LoadAccountById succeeds', async () => {
+      const httpResponse = await sut.handle({ params: { userId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id: userId,
+          name,
+          email,
+          role,
+          accessToken
+        }
+      })
+    })
   })
 })
