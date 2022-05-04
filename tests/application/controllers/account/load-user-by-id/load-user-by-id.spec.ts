@@ -1,16 +1,32 @@
 import { Controller, LoadUserByIdController } from '@/application/controllers'
 import { RequiredStringValidator, StringValidator } from '@/application/validation'
+import { LoadAccountById } from '@/domain/usecases'
+
+import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('LoadUserByIdController', () => {
   let sut: LoadUserByIdController
+  let loadAccountById: MockProxy<LoadAccountById>
   let userId: string
+  let name: string
+  let email: string
+  let role: string
+  let accessToken: string
 
   beforeAll(() => {
     userId = 'any_id'
+    loadAccountById = mock()
+    loadAccountById.perform.mockResolvedValue({
+      id: userId,
+      name,
+      email,
+      role,
+      access_token: accessToken
+    })
   })
 
   beforeEach(() => {
-    sut = new LoadUserByIdController()
+    sut = new LoadUserByIdController(loadAccountById)
   })
 
   it('Should be an instance of Controller', () => {
@@ -18,11 +34,20 @@ describe('LoadUserByIdController', () => {
   })
 
   it('Should build Validators correctly', async () => {
-    const validators = sut.buildValidators({ params: { userId: 'any_id' } })
+    const validators = sut.buildValidators({ params: { userId } })
 
     expect(validators).toEqual([
       new RequiredStringValidator(userId, 'userId'),
       new StringValidator(userId, 'userId')
     ])
+  })
+
+  describe('LoadUserById', () => {
+    it('Should call LoadAccountById with correct values', async () => {
+      await sut.handle({ params: { userId } })
+
+      expect(loadAccountById.perform).toHaveBeenCalledWith({ id: userId })
+      expect(loadAccountById.perform).toHaveBeenCalledTimes(1)
+    })
   })
 })
