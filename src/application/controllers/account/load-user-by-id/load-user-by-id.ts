@@ -1,5 +1,5 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse, noContent } from '@/application/helpers'
+import { HttpRequest, HttpResponse, noContent, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { LoadAccountById } from '@/domain/usecases'
 
@@ -17,9 +17,17 @@ export class LoadUserByIdController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
-    await this.loadAccountById.perform({ id: httpRequest.params.userId })
-
-    return noContent()
+    const user = await this.loadAccountById.perform({ id: httpRequest.params.userId })
+    if (!user) {
+      return noContent()
+    }
+    return ok({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      accessToken: user.access_token
+    })
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
