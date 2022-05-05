@@ -44,5 +44,21 @@ describe('Users Route', () => {
       expect(bodyResult.id).toBe(response.body.id)
       expect(bodyResult.name).toBe(response.body.name)
     })
+
+    it('should return 403 if no AccessToken was given', async () => {
+      const { body } = await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+
+      const response = await request(app)
+        .get('/api/me')
+        .set('x-access-token', body.accessToken)
+
+      const id: string = response.body.id
+      const result = await request(app)
+        .get(`/api/users/${id}`)
+
+      expect(result.status).toBe(403)
+    })
   })
 })
