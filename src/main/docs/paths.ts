@@ -2,12 +2,14 @@ import {
   signupPath,
   loginPath,
   mePath,
-  eventPath
+  eventPath,
+  usersPath
 } from './paths/'
 
 export default {
   '/signup': signupPath,
   '/signin': loginPath,
   '/me': mePath,
-  '/event': eventPath
+  '/event': eventPath,
+  '/users/{userId}': usersPath
 }
