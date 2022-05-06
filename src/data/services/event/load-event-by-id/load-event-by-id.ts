@@ -6,7 +6,6 @@ export class LoadEventByIdService implements LoadEventById {
   ) {}
 
   async perform (params: LoadEventById.Params): Promise<LoadEventById.Result> {
-    await this.loadEventByIdRepository.loadById({ id: params.id })
-    return undefined
+    return await this.loadEventByIdRepository.loadById({ id: params.id })
   }
 }
