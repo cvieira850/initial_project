@@ -47,14 +47,14 @@ describe('LoadEventByIdController', () => {
   })
 
   describe('LoadEventById usecase', () => {
-    it('Should call LoadAccountById with correct values', async () => {
+    it('Should call LoadUserById with correct values', async () => {
       await sut.handle({ params: { eventId } })
 
       expect(loadEventById.perform).toHaveBeenCalledWith({ id: eventId })
       expect(loadEventById.perform).toHaveBeenCalledTimes(1)
     })
 
-    it('Should return 201 if LoadAccountById fails', async () => {
+    it('Should return 201 if LoadUserById fails', async () => {
       loadEventById.perform.mockResolvedValueOnce(undefined)
 
       const httpResponse = await sut.handle({ params: { eventId } })
@@ -62,6 +62,21 @@ describe('LoadEventByIdController', () => {
       expect(httpResponse).toEqual({
         statusCode: 201,
         data: null
+      })
+    })
+
+    it('Should return 200 if LoadUserById succeeds', async () => {
+      const httpResponse = await sut.handle({ params: { eventId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id: eventId,
+          name,
+          description,
+          user_id,
+          created_at: expect.any(Date)
+        }
       })
     })
   })
