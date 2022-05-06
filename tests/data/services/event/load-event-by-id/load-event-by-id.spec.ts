@@ -39,4 +39,12 @@ describe('LoadEventByIdService', () => {
 
     await expect(promise).rejects.toThrow(new Error())
   })
+
+  it('Should return undefined if LoadEventByIdRepository returns undefined', async () => {
+    loadEventByIdRepository.loadById.mockResolvedValueOnce(undefined)
+
+    const promise = sut.perform({ id })
+
+    await expect(promise).resolves.toBeUndefined()
+  })
 })
