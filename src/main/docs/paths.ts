@@ -10,6 +10,6 @@ export default {
   '/signup': signupPath,
   '/signin': loginPath,
   '/me': mePath,
-  '/event': eventPath,
+  '/events': eventPath,
   '/users/{userId}': usersPath
 }
