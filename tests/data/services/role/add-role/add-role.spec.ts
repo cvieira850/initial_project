@@ -44,5 +44,13 @@ describe('AddRoleService', () => {
 
       expect(result).toBeUndefined()
     })
+
+    it('Should rethrow if LoadRoleByNameRepository throws', async () => {
+      roleRepo.loadByName.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ name, weight })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
