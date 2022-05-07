@@ -1,7 +1,10 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm'
+import bcrypt from 'bcrypt'
 
 export class CreateUsers1648636802622 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
+    const password = await bcrypt.hash('admin', 12)
+
     await queryRunner.query('create extension if not exists "uuid-ossp"')
     await queryRunner.createTable(
       new Table({
@@ -25,8 +28,8 @@ export class CreateUsers1648636802622 implements MigrationInterface {
             isNullable: true
           },
           {
-            name: 'role',
-            type: 'varchar',
+            name: 'role_id',
+            type: 'uuid',
             isNullable: true
           },
           {
@@ -68,9 +71,35 @@ export class CreateUsers1648636802622 implements MigrationInterface {
         ]
       })
     )
+    await queryRunner.createForeignKey(
+      'users',
+      new TableForeignKey({
+        columnNames: ['role_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'roles',
+        name: 'RoleUser',
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      })
+    )
+
+    await queryRunner.query(
+      `INSERT INTO USERS(email,name,role_id, password)
+        values
+        (
+          'contato@caiovieira.com.br',
+          'Caio Vieira',
+          (
+            select id from roles where name='sysAdmin'
+          ),
+          '${password}'
+        )
+      `
+    )
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropForeignKey('users', 'RoleUser')
     await queryRunner.dropTable('users')
   }
 }

@@ -1,4 +1,4 @@
-import { User } from '@/infra/postgres/entities'
+import { User, Role } from '@/infra/postgres/entities'
 import { PgAccountRepository } from '@/infra/postgres/repos'
 import { makeFakeDb } from '@/tests/infra/postgres/mocks'
 import { PgRepository } from '@/infra/postgres/repos/repository'
@@ -9,13 +9,15 @@ import { Repository } from 'typeorm'
 describe('AccountPgRepository', () => {
   let sut: PgAccountRepository
   let connection: PgConnection
+  let pgRoleRepo: Repository<Role>
   let pgUserRepo: Repository<User>
   let backup: IBackup
 
   beforeAll(async () => {
     connection = PgConnection.getInstance()
-    const db = await makeFakeDb([User])
+    const db = await makeFakeDb([Role,User])
     backup = db.backup()
+    pgRoleRepo = connection.getRepository(Role)
     pgUserRepo = connection.getRepository(User)
   })
   beforeEach(() => {
@@ -33,7 +35,8 @@ describe('AccountPgRepository', () => {
 
   describe('loadByEmail', () => {
     it('Should return an account if email exists', async () => {
-      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'any_role' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role_id: '1' })
 
       const account = await sut.loadByEmail({ email: 'any_email' })
 
@@ -49,12 +52,16 @@ describe('AccountPgRepository', () => {
 
   describe('add', () => {
     it('Should create an account', async () => {
+      await pgRoleRepo.save({name: 'user', weight: 1})
+
       await sut.add({ email: 'any_email', name: 'any_name', password: '1234' })
       const pgUser = await pgUserRepo.findOne({ email: 'any_email' })
       expect(pgUser?.id).toBe(1)
     })
 
     it('Should return an account on success', async () => {
+      await pgRoleRepo.save({name: 'user', weight: 1})
+
       const account = await sut.add({ email: 'any_email', name: 'any_name', password: '1234' })
       const pgUser = await pgUserRepo.findOne({ email: 'any_email' })
 
@@ -65,7 +72,8 @@ describe('AccountPgRepository', () => {
 
   describe('updateAccessToken() ', () => {
     it('Should return an account on updateAccessToken success', async () => {
-      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role_id: '1' })
       await pgUserRepo.findOne({ email: 'any_email' })
 
       const updatedUser = await sut.updateAccessToken({ id: '1', accessToken: 'any_token' })
@@ -75,7 +83,8 @@ describe('AccountPgRepository', () => {
 
   describe('LoadAccountByToken', () => {
     it('Should return an account lo loadAccountByToken without role', async () => {
-      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user', access_token: 'any_token' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role_id: '1', access_token: 'any_token' })
 
       const user = await sut.loadByToken({ accessToken: 'any_token' })
 
@@ -83,30 +92,38 @@ describe('AccountPgRepository', () => {
     })
 
     it('Should return an account on loadAccountByToken with role', async () => {
-      await pgUserRepo.save({ email: 'any_email',name: 'any_name',  role: 'user', password: '1234', access_token: 'any_token' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name',  role_id: '1', password: '1234', access_token: 'any_token' })
       const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
 
       expect(user).toEqual({ id: '1', role: 'user',name: 'any_name',  email: 'any_email', password: '1234', access_token: 'any_token' })
     })
 
     it('Should return undefined on loadAccountByToken with role admin on account role user', async () => {
-      await pgUserRepo.save({ email: 'any_email',name: 'any_name', role: 'user', password: '1234', access_token: 'any_token' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgRoleRepo.save({name: 'admin', weight: 5})
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name', role_id: '1', password: '1234', access_token: 'any_token' })
 
       const user = await sut.loadByToken({ accessToken: 'any_token', role: 'admin' })
 
       expect(user).toBeUndefined()
     })
 
-    it('Should return undefined on loadAccountByToken with role user on account role admin', async () => {
-      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role: 'admin', password: '1234', access_token: 'any_token' })
+    it('Should return an account on loadAccountByToken with role user on account role admin', async () => {
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgRoleRepo.save({name: 'admin', weight: 5})
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role_id: '2', password: '1234', access_token: 'any_token' })
 
       const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
 
       expect(user).toEqual({ id: '1',name: 'any_name' , role: 'admin', email: 'any_email', password: '1234', access_token: 'any_token' })
     })
 
-    it('Should return undefined on loadAccountByToken with role admin on account role sysAdmin', async () => {
-      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role: 'sysAdmin', password: '1234', access_token: 'any_token' })
+    it('Should return an account on loadAccountByToken with role admin on account role sysAdmin', async () => {
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgRoleRepo.save({name: 'admin', weight: 5})
+      await pgRoleRepo.save({name: 'sysAdmin', weight: 10})
+      await pgUserRepo.save({ email: 'any_email',name: 'any_name' , role_id: '3', password: '1234', access_token: 'any_token' })
 
       const user = await sut.loadByToken({ accessToken: 'any_token', role: 'user' })
 
@@ -116,7 +133,8 @@ describe('AccountPgRepository', () => {
 
   describe('loadById', () => {
     it('Should return an account on loadById', async () => {
-      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user' })
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role_id: '1' })
 
       const user = await sut.loadById({ id: '1' })
 

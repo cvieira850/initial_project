@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'roles' })
+export class Role {
   @PrimaryGeneratedColumn()
   id!: string
 
@@ -9,22 +9,7 @@ export class User {
   name!: string
 
   @Column()
-  email!: string
-
-  @Column()
-  password!: string
-
-  @Column()
-  role_id!: string
-
-  @Column({ nullable: true })
-  access_token?: string
-
-  @Column({ nullable: true })
-  reset_password_token?: string
-
-  @Column({ nullable: true })
-  reset_password_token_expires_at?: Date
+  weight!: number
 
   @CreateDateColumn()
   created_at!: Date

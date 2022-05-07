@@ -1,5 +1,5 @@
 import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository } from "@/data/protocols/db";
-import { User } from "@/infra/postgres/entities";
+import { User, Role } from "@/infra/postgres/entities";
 import { PgRepository } from "./repository";
 
 type LoadParams = LoadAccountByEmailRepository.Params
@@ -30,17 +30,21 @@ export class PgAccountRepository extends PgRepository implements
 
   async add (params: AddParams): Promise<AddResult> {
     const pgUserRepo = this.getRepository(User)
-    const account = await pgUserRepo.save({
-      email: params.email,
-      name: params.name,
-      password: params.password,
-      role: 'user'
-    })
-    if (account) {
-      return {
-        id: account.id.toString(),
-        name: account.name,
-        email: account.email
+    const pgRoleRepo = this.getRepository(Role)
+    const role = await pgRoleRepo.findOne({name: 'user'})
+    if(role) {
+      const account = await pgUserRepo.save({
+        email: params.email,
+        name: params.name,
+        password: params.password,
+        role_id: role.id
+      })
+      if (account) {
+        return {
+          id: account.id.toString(),
+          name: account.name,
+          email: account.email
+        }
       }
     }
   }
@@ -62,27 +66,33 @@ export class PgAccountRepository extends PgRepository implements
 
   async loadByToken (params: LoadAccountByTokenRepository.Params): Promise<LoadAccountByTokenRepository.Result> {
     const pgUserRepo = this.getRepository(User)
+    const pgRoleRepo = this.getRepository(Role)
+
     const pgUser = await pgUserRepo.findOne({ access_token: params.accessToken })
     if (pgUser !== undefined) {
-      if (params.role) {
-        if (pgUser.role === params.role || (pgUser.role === 'admin' && params.role === 'user') || (pgUser.role === 'sysAdmin')) {
+      const userRole = await pgRoleRepo.findOne({id: pgUser.role_id})
+      if(userRole){
+        if (params.role) {
+          const paramRole = await pgRoleRepo.findOne({name: params.role})
+          if (paramRole && userRole.weight >= paramRole.weight) {
+            return {
+              id: pgUser.id.toString(),
+              name: pgUser.name,
+              email: pgUser.email,
+              password: pgUser.password,
+              role: userRole.name,
+              access_token: pgUser.access_token
+            }
+          }
+        } else {
           return {
             id: pgUser.id.toString(),
             name: pgUser.name,
             email: pgUser.email,
             password: pgUser.password,
-            role: pgUser.role,
+            role: userRole.name,
             access_token: pgUser.access_token
           }
-        }
-      } else {
-        return {
-          id: pgUser.id.toString(),
-          name: pgUser.name,
-          email: pgUser.email,
-          password: pgUser.password,
-          role: pgUser.role,
-          access_token: pgUser.access_token
         }
       }
     }
@@ -91,14 +101,19 @@ export class PgAccountRepository extends PgRepository implements
 
   async loadById (params: LoadAccountByIdRepository.Params): Promise<LoadAccountByIdRepository.Result> {
     const pgUserRepo = this.getRepository(User)
+    const pgRoleRepo = this.getRepository(Role)
+
     const pgUser =  await pgUserRepo.findOne({id: params.id})
     if(pgUser) {
-      return {
-        id: pgUser.id.toString(),
-        name: pgUser.name,
-        email: pgUser.email,
-        role: pgUser.role,
-        access_token: pgUser.access_token
+      const userRole = await pgRoleRepo.findOne({id: pgUser.role_id})
+      if(userRole) {
+        return {
+          id: pgUser.id.toString(),
+          name: pgUser.name,
+          email: pgUser.email,
+          role: userRole.name,
+          access_token: pgUser.access_token
+        }
       }
     }
   }
