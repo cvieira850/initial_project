@@ -61,5 +61,13 @@ describe('AddRoleService', () => {
       expect(roleRepo.add).toHaveBeenCalledWith({ name, weight })
       expect(roleRepo.add).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if AddRoleRepository throws', async () => {
+      roleRepo.add.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ name, weight })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
