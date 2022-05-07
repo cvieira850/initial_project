@@ -1,10 +1,11 @@
-import { AddEventRepository, LoadEventByNameRepository } from "@/data/protocols/db";
+import { AddEventRepository, LoadEventByNameRepository, LoadEventByIdRepository } from "@/data/protocols/db";
 import { Event } from "@/infra/postgres/entities";
 import { PgRepository } from "./repository";
 
 export class PgEventRepository extends PgRepository implements
   LoadEventByNameRepository,
-  AddEventRepository
+  AddEventRepository,
+  LoadEventByIdRepository
 {
   async loadByName (params: LoadEventByNameRepository.Params): Promise<LoadEventByNameRepository.Result> {
     const eventRepo =  this.getRepository(Event)
@@ -38,4 +39,17 @@ export class PgEventRepository extends PgRepository implements
     }
   }
 
+  async loadById (params: LoadEventByIdRepository.Params): Promise<LoadEventByIdRepository.Result> {
+    const pgEventRepo = this.getRepository(Event)
+    const event =  await pgEventRepo.findOne({id: params.id})
+    if(event) {
+      return {
+        id: event.id.toString(),
+        name: event.name,
+        description: event.description,
+        user_id: event.user_id,
+        created_at: event.created_at
+      }
+    }
+  }
 }
