@@ -6,10 +6,16 @@ import { mock, MockProxy } from 'jest-mock-extended'
 describe('AddRoleService', () => {
   let sut: AddRoleService
   let roleRepo: MockProxy<LoadRoleByNameRepository>
+  let id: string
   let name: string
+  let weight: number
+  let created_at: Date
 
   beforeEach(() => {
+    id = 'any_id'
     name = 'any_name'
+    weight = 1
+    created_at = new Date()
     roleRepo = mock()
     roleRepo.loadByName.mockResolvedValue(undefined)
   })
@@ -24,6 +30,19 @@ describe('AddRoleService', () => {
 
       expect(roleRepo.loadByName).toHaveBeenCalledWith({ name })
       expect(roleRepo.loadByName).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return undefined if LoadRoleByNameRepository returns an event', async () => {
+      roleRepo.loadByName.mockResolvedValueOnce({
+        id,
+        name,
+        weight,
+        created_at
+      })
+
+      const result = await sut.perform({ name, weight })
+
+      expect(result).toBeUndefined()
     })
   })
 })
