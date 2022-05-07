@@ -6,8 +6,9 @@ export class AddRoleService implements AddRole {
   ) {}
 
   async perform (params: AddRole.Params): Promise<AddRole.Result> {
-    await this.roleRepo.loadByName({ name: params.name })
-    await this.roleRepo.add({ name: params.name, weight: params.weight })
-    return undefined
+    const role = await this.roleRepo.loadByName({ name: params.name })
+    if (!role) {
+      return await this.roleRepo.add({ name: params.name, weight: params.weight })
+    }
   }
 }
