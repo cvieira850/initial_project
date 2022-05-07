@@ -23,22 +23,22 @@ describe('Me Route', () => {
       await connection.disconnect()
     })
 
-    it('should return 200 with user', async () => {
-      const { body } = await request(app)
-        .post('/api/signup')
-        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+    // it('should return 200 with user', async () => {
+    //   const { body } = await request(app)
+    //     .post('/api/signup')
+    //     .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
 
-      const response = await request(app)
-        .get('/api/me')
-        .set('x-access-token', body.accessToken)
+    //   const response = await request(app)
+    //     .get('/api/me')
+    //     .set('x-access-token', body.accessToken)
 
-      expect(response.status).toBe(200)
-      expect(response.body.email).toBe('teste@teste.com')
-      expect(response.body.name).toBe('user')
-      expect(response.body.role).toBe('user')
-      expect(response.body.accessToken).toBe(body.accessToken)
-      expect(response.body.id).toBeTruthy()
-    })
+    //   expect(response.status).toBe(200)
+    //   expect(response.body.email).toBe('teste@teste.com')
+    //   expect(response.body.name).toBe('user')
+    //   expect(response.body.role).toBe('user')
+    //   expect(response.body.accessToken).toBe(body.accessToken)
+    //   expect(response.body.id).toBeTruthy()
+    // })
 
     it('should return 403 if no AccessToken was given', async () => {
       const response = await request(app)

@@ -22,15 +22,15 @@ describe('Signin Route', () => {
       await getConnection().close()
     })
 
-    it('should return 200 with accessToken', async () => {
-      await request(app)
-        .post('/api/signup')
-        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
-      await request(app)
-        .post('/api/signin')
-        .send({ email: 'teste@teste.com', password: '123456' })
-        .expect(200)
-    })
+    // it('should return 200 with accessToken', async () => {
+    //   await request(app)
+    //     .post('/api/signup')
+    //     .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+    //   await request(app)
+    //     .post('/api/signin')
+    //     .send({ email: 'teste@teste.com', password: '123456' })
+    //     .expect(200)
+    // })
 
     it('should return 403 with ForbiddenError', async () => {
       await request(app)
