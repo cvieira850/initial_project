@@ -59,4 +59,21 @@ describe('PgEventRepository', () => {
       expect(event).toEqual({ id: '1', name: 'any_name', user_id: '1', description: 'any_description', created_at: expect.any(Date) })
     })
   })
+
+  describe('LoadEventByIdRepository', () => {
+    it('Should return an event on loadById', async () => {
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role: 'user' })
+      await pgEventRepo.save({ name: 'any_name', user_id: '1', description: 'any_description' })
+
+      const event = await sut.loadById({ id: '1' })
+
+      expect(event).toEqual({ id: '1', name: 'any_name', user_id: '1', description: 'any_description', created_at: expect.any(Date) })
+    })
+
+    it('Should return undefined if loadById dont return an event', async () => {
+      const event = await sut.loadById({ id: '1' })
+
+      expect(event).toBeUndefined()
+    })
+  })
 })
