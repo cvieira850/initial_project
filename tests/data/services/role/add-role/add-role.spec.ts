@@ -1,11 +1,11 @@
 import { AddRoleService } from '@/data/services'
-import { LoadRoleByNameRepository } from '@/data/protocols/db'
+import { LoadRoleByNameRepository, AddRoleRepository } from '@/data/protocols/db'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('AddRoleService', () => {
   let sut: AddRoleService
-  let roleRepo: MockProxy<LoadRoleByNameRepository>
+  let roleRepo: MockProxy<LoadRoleByNameRepository & AddRoleRepository>
   let id: string
   let name: string
   let weight: number
@@ -51,6 +51,15 @@ describe('AddRoleService', () => {
       const promise = sut.perform({ name, weight })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('AddRoleRepository', () => {
+    it('Should call AddRoleRepository with correct values', async () => {
+      await sut.perform({ name, weight })
+
+      expect(roleRepo.add).toHaveBeenCalledWith({ name, weight })
+      expect(roleRepo.add).toHaveBeenCalledTimes(1)
     })
   })
 })
