@@ -18,6 +18,12 @@ describe('AddRoleService', () => {
     created_at = new Date()
     roleRepo = mock()
     roleRepo.loadByName.mockResolvedValue(undefined)
+    roleRepo.add.mockResolvedValue({
+      id,
+      name,
+      weight,
+      created_at
+    })
   })
 
   beforeEach(() => {
@@ -68,6 +74,17 @@ describe('AddRoleService', () => {
       const promise = sut.perform({ name, weight })
 
       await expect(promise).rejects.toThrow()
+    })
+
+    it('Should return undefined if LoadRoleByNameRepository returns an event', async () => {
+      const result = await sut.perform({ name, weight })
+
+      expect(result).toEqual({
+        id,
+        name,
+        weight,
+        created_at: expect.any(Date)
+      })
     })
   })
 })
