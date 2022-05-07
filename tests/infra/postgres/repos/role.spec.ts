@@ -33,4 +33,14 @@ describe('PgRoleRepository', () => {
     it('Should be an instance of PgRepository', () => {
       expect(sut).toBeInstanceOf(PgRepository)
     })
+
+    describe('LoadRoleByNameRepository', () => {
+      it('Should return a role on loadByName success', async () => {
+        await pgRoleRepo.save({ name: 'user', weight: 1 })
+
+        const role = await sut.loadByName({ name: 'user' })
+
+        expect(role).toEqual({ id: '1', name: 'user', weight: 1, created_at: expect.any(Date) })
+      })
+    })
 })
