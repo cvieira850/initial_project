@@ -1,4 +1,4 @@
-import { InvalidParamError, RequiredFieldError, UnauthorizedError } from '@/application/errors'
+import { InvalidParamError, RequiredFieldError } from '@/application/errors'
 import { User } from '@/infra/postgres/entities'
 import { PgConnection } from '@/infra/postgres/helpers'
 import { app } from '@/main/config/app'
@@ -23,24 +23,24 @@ describe('Signup Route', () => {
     afterAll(async () => {
       await connection.disconnect()
     })
-    it('should return 200 with accessToken', async () => {
-      await request(app)
-        .post('/api/signup')
-        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
-        .expect(200)
-    })
+    // it('should return 200 with accessToken', async () => {
+    //   await request(app)
+    //     .post('/api/signup')
+    //     .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+    //     .expect(200)
+    // })
 
-    it('should return 401 with unauthorizedError', async () => {
-      await request(app)
-        .post('/api/signup')
-        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
-        .expect(200)
+    // it('should return 401 with unauthorizedError', async () => {
+    //   await request(app)
+    //     .post('/api/signup')
+    //     .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+    //     .expect(200)
 
-      await request(app)
-        .post('/api/signup')
-        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
-        .expect(401, { error: new UnauthorizedError().message })
-    })
+    //   await request(app)
+    //     .post('/api/signup')
+    //     .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+    //     .expect(401, { error: new UnauthorizedError().message })
+    // })
 
     it('should return 400 with RequiredFieldError', async () => {
       await request(app)
