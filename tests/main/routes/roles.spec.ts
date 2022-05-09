@@ -1,4 +1,4 @@
-import { InvalidParamError } from '@/application/errors'
+import { InvalidParamError, RequiredFieldError } from '@/application/errors'
 import { Role } from '@/infra/postgres/entities'
 import { PgConnection } from '@/infra/postgres/helpers'
 import { app } from '@/main/config/app'
@@ -44,6 +44,18 @@ describe('Role routes', () => {
         .post('/api/roles')
         .send({ name: 2, weight: 1 })
         .expect(400, { error: new InvalidParamError('name').message })
+    })
+
+    it('should return 400 with RequiredFieldError', async () => {
+      await request(app)
+        .post('/api/roles')
+        .send({ weight: 1 })
+        .expect(400, { error: new RequiredFieldError('name').message })
+
+      await request(app)
+        .post('/api/roles')
+        .send({ name: 'user' })
+        .expect(400, { error: new RequiredFieldError('weight').message })
     })
   })
 })
