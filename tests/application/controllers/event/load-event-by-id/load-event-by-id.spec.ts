@@ -1,5 +1,5 @@
 import { LoadEventByIdController, Controller } from '@/application/controllers'
-import { RequiredStringValidator, StringValidator } from '@/application/validation'
+import { RequiredValidator, StringValidator } from '@/application/validation'
 import { LoadEventById } from '@/domain/usecases'
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -41,7 +41,7 @@ describe('LoadEventByIdController', () => {
     })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(eventId, 'eventId'),
+      new RequiredValidator(eventId, 'eventId'),
       new StringValidator(eventId, 'eventId')
     ])
   })

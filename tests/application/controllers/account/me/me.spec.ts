@@ -1,5 +1,5 @@
 import { MeController } from '@/application/controllers'
-import { RequiredStringValidator, StringValidator } from '@/application/validation'
+import { RequiredValidator, StringValidator } from '@/application/validation'
 import { LoadAccountById } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -36,7 +36,7 @@ describe('Me Controller', () => {
     const validators = sut.buildValidators({ headers: { accountId: 'any_id' } })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(accountId, 'accountId'),
+      new RequiredValidator(accountId, 'accountId'),
       new StringValidator(accountId, 'accountId')
     ])
   })

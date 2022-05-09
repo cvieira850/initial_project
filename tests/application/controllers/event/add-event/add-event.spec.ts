@@ -1,6 +1,6 @@
 import { Controller, AddEventController } from '@/application/controllers'
 import { AddEvent } from '@/domain/usecases'
-import { RequiredStringValidator, StringValidator } from '@/application/validation'
+import { RequiredValidator, StringValidator } from '@/application/validation'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 import { UnauthorizedError } from '@/application/errors'
@@ -43,11 +43,11 @@ describe('AddEventController', () => {
     })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(accountId, 'accountId'),
+      new RequiredValidator(accountId, 'accountId'),
       new StringValidator(accountId, 'accountId'),
-      new RequiredStringValidator(name, 'name'),
+      new RequiredValidator(name, 'name'),
       new StringValidator(name, 'name'),
-      new RequiredStringValidator(description, 'description'),
+      new RequiredValidator(description, 'description'),
       new StringValidator(description, 'description')
     ])
   })
