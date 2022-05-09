@@ -1,4 +1,5 @@
 import { Controller, LoadRolesController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors'
 import { LoadRoles } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -73,6 +74,17 @@ describe('LoadRolesController', () => {
             created_at: expect.any(Date)
           }
         ]
+      })
+    })
+
+    it('Should return 401 if AddRole fails', async () => {
+      loadRoles.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ body: { } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
       })
     })
   })
