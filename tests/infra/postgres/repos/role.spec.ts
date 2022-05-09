@@ -42,5 +42,11 @@ describe('PgRoleRepository', () => {
 
         expect(role).toEqual({ id: '1', name: 'user', weight: 1, created_at: expect.any(Date) })
       })
+
+      it('Should return undefined if loadByName fails', async() => {
+        const event = await sut.loadByName({ name: 'user' })
+
+        expect(event).toBeUndefined()
+      })
     })
 })
