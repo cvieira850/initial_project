@@ -40,5 +40,40 @@ export const rolePath = {
         $ref: '#/components/serverError'
       }
     }
+  },
+  get: {
+    security: [{
+      apiKeyAuth: []
+    }],
+    tags: ['Role'],
+    operationId: 'get',
+    summary: 'API to load roles',
+    requestBody: {
+      description: 'API to load roles'
+    },
+    responses: {
+      200: {
+        description: 'Success',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/schemas/roles'
+            }
+          }
+        }
+      },
+      400: {
+        $ref: '#/components/badRequest'
+      },
+      403: {
+        $ref: '#/components/forbidden'
+      },
+      404: {
+        $ref: '#/components/notFound'
+      },
+      500: {
+        $ref: '#/components/serverError'
+      }
+    }
   }
 }
