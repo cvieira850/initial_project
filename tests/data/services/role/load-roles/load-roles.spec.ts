@@ -79,5 +79,24 @@ describe('LoadRoles Service', () => {
 
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should return an array of roles on LoadRolesRepository success', async () => {
+      const result = await sut.perform(null)
+
+      expect(result).toEqual([
+        {
+          id,
+          name,
+          weight,
+          created_at: expect.any(Date)
+        },
+        {
+          id: other_id,
+          name: other_name,
+          weight: other_weight,
+          created_at: expect.any(Date)
+        }
+      ])
+    })
   })
 })
