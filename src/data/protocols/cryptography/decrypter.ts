@@ -7,5 +7,5 @@ export namespace Decrypter {
     ciphertext: string
   }
 
-  export type Result = string | Error
+  export type Result = string | Error | undefined
 }

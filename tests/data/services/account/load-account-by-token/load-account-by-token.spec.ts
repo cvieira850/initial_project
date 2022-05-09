@@ -46,6 +46,14 @@ describe('LoadAccountByTokenService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if Decrypter returns undefined', async () => {
+      decripter.decrypt.mockResolvedValueOnce(undefined)
+
+      const response = await sut.perform({ accessToken, role })
+
+      expect(response).toBeUndefined()
+    })
   })
 
   describe('LoadAccountByTokenRepository', () => {
