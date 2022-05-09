@@ -53,5 +53,27 @@ describe('LoadRolesController', () => {
       expect(loadRoles.perform).toHaveBeenCalledWith(null)
       expect(loadRoles.perform).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return 200 if LoadRoles succeeds', async () => {
+      const httpResponse = await sut.handle({ body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: [
+          {
+            id,
+            name,
+            weight,
+            created_at: expect.any(Date)
+          },
+          {
+            id: other_id,
+            name: other_name,
+            weight: other_weight,
+            created_at: expect.any(Date)
+          }
+        ]
+      })
+    })
   })
 })
