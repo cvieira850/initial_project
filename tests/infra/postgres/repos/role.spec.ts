@@ -44,17 +44,31 @@ describe('PgRoleRepository', () => {
       })
 
       it('Should return undefined if loadByName fails', async() => {
-        const event = await sut.loadByName({ name: 'user' })
+        const role = await sut.loadByName({ name: 'user' })
 
-        expect(event).toBeUndefined()
+        expect(role).toBeUndefined()
       })
     })
 
     describe('AddRoleRepository', () => {
       it('Should return an role on add success', async () => {
-        const event = await sut.add({ name: 'any_name', weight: 1 })
+        const role = await sut.add({ name: 'any_name', weight: 1 })
 
-        expect(event).toEqual({ id: '1', name: 'any_name', weight: 1, created_at: expect.any(Date) })
+        expect(role).toEqual({ id: '1', name: 'any_name', weight: 1, created_at: expect.any(Date) })
+      })
+    })
+
+    describe('LoadRolesRepository', () => {
+      it('Should return an array of roles on load success', async () => {
+        await pgRoleRepo.save({ name: 'user', weight: 1 })
+        await pgRoleRepo.save({ name: 'admin', weight: 2 })
+
+        const roles = await sut.load(null)
+
+        expect(roles).toEqual([
+          { id: 1, name: 'user', weight: 1, created_at: expect.any(Date) },
+          { id: 2, name: 'admin', weight: 2, created_at: expect.any(Date) }
+        ])
       })
     })
 })
