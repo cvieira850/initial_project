@@ -1,5 +1,5 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse, ok } from '@/application/helpers'
+import { HttpRequest, HttpResponse, ok, unauthorized } from '@/application/helpers'
 import { LoadRoles } from '@/domain/usecases'
 
 export class LoadRolesController extends Controller {
@@ -9,7 +9,9 @@ export class LoadRolesController extends Controller {
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     const roles = await this.loadRoles.perform(null)
-
-    return ok(roles)
+    if (roles) {
+      return ok(roles)
+    }
+    return unauthorized()
   }
 }
