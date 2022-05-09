@@ -5,7 +5,9 @@ import {
   loginParamsSchema,
   userSchema,
   eventParamsSchema,
-  eventSchema
+  eventSchema,
+  roleParamsSchema,
+  roleSchema
 } from './schemas/'
 
 export default {
@@ -15,5 +17,7 @@ export default {
   loginParams: loginParamsSchema,
   user: userSchema,
   eventParams: eventParamsSchema,
-  event: eventSchema
+  event: eventSchema,
+  roleParams: roleParamsSchema,
+  role: roleSchema
 }
