@@ -1,9 +1,9 @@
-import { EmailValidation, EmailValidatorAdapter, RequiredStringValidator, StringValidator } from '@/application/validation'
+import { EmailValidation, EmailValidatorAdapter, RequiredValidator, StringValidator } from '@/application/validation'
 import { AuthenticationController } from '@/application/controllers'
 import { Authentication } from '@/domain/usecases'
+import { ForbiddenError, ServerError } from '@/application/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
-import { ForbiddenError, ServerError } from '@/application/errors'
 
 describe('Authentication Controller', () => {
   let sut: AuthenticationController
@@ -30,10 +30,10 @@ describe('Authentication Controller', () => {
     const validators = sut.buildValidators({ body: { email, password } })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(email, 'email'),
+      new RequiredValidator(email, 'email'),
       new StringValidator(email, 'email'),
       new EmailValidation(email, 'email', new EmailValidatorAdapter()),
-      new RequiredStringValidator(password, 'password'),
+      new RequiredValidator(password, 'password'),
       new StringValidator(password, 'password')
     ])
   })
