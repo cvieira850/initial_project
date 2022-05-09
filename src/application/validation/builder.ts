@@ -1,8 +1,9 @@
-import { Validator, RequiredStringValidator } from '@/application/validation'
+import { Validator, RequiredValidator } from '@/application/validation'
 import { CompareFieldsValidation } from './compare-fields-validation'
 import { EmailValidation } from './email-validation'
 import { EmailValidatorAdapter } from './email-validator-adapter'
 import { StringValidator } from './string'
+import { NumberValidator } from './number'
 
 export class ValidationBuilder {
   private constructor (
@@ -16,12 +17,17 @@ export class ValidationBuilder {
   }
 
   required (): ValidationBuilder {
-    this.validators.push(new RequiredStringValidator(this.value, this.fieldName))
+    this.validators.push(new RequiredValidator(this.value, this.fieldName))
     return this
   }
 
   string (): ValidationBuilder {
     this.validators.push(new StringValidator(this.value, this.fieldName))
+    return this
+  }
+
+  number (): ValidationBuilder {
+    this.validators.push(new NumberValidator(this.value, this.fieldName))
     return this
   }
 

@@ -1,7 +1,8 @@
 import { SignupController, Controller } from '@/application/controllers'
 import { ServerError, UnauthorizedError } from '@/application/errors'
-import { CompareFieldsValidation, EmailValidation, EmailValidatorAdapter, RequiredStringValidator, StringValidator } from '@/application/validation'
+import { CompareFieldsValidation, EmailValidation, EmailValidatorAdapter, RequiredValidator, StringValidator } from '@/application/validation'
 import { Signup } from '@/domain/usecases'
+
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('SignupController', () => {
@@ -35,14 +36,14 @@ describe('SignupController', () => {
     const validators = sut.buildValidators({ body: { email, name, password, passwordConfirmation } })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(email, 'email'),
+      new RequiredValidator(email, 'email'),
       new EmailValidation(email, 'email', new EmailValidatorAdapter()),
       new StringValidator(email, 'email'),
-      new RequiredStringValidator(name, 'name'),
+      new RequiredValidator(name, 'name'),
       new StringValidator(name, 'name'),
-      new RequiredStringValidator(password, 'password'),
+      new RequiredValidator(password, 'password'),
       new StringValidator(password, 'password'),
-      new RequiredStringValidator(passwordConfirmation, 'passwordConfirmation'),
+      new RequiredValidator(passwordConfirmation, 'passwordConfirmation'),
       new StringValidator(passwordConfirmation, 'passwordConfirmation'),
       new CompareFieldsValidation(password, 'passwordConfirmation', passwordConfirmation)
     ])

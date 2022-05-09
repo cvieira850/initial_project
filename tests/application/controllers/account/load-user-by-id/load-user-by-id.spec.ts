@@ -1,5 +1,5 @@
 import { Controller, LoadUserByIdController } from '@/application/controllers'
-import { RequiredStringValidator, StringValidator } from '@/application/validation'
+import { RequiredValidator, StringValidator } from '@/application/validation'
 import { LoadAccountById } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -37,7 +37,7 @@ describe('LoadUserByIdController', () => {
     const validators = sut.buildValidators({ params: { userId } })
 
     expect(validators).toEqual([
-      new RequiredStringValidator(userId, 'userId'),
+      new RequiredValidator(userId, 'userId'),
       new StringValidator(userId, 'userId')
     ])
   })
