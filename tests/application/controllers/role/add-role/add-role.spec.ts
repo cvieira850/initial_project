@@ -1,6 +1,7 @@
 import { AddRoleController, Controller } from '@/application/controllers'
 import { AddRole } from '@/domain/usecases'
 import { NumberValidator, RequiredValidator, StringValidator } from '@/application/validation'
+import { UnauthorizedError } from '@/application/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -66,6 +67,17 @@ describe('AddRoleController', () => {
           weight,
           created_at: expect.any(Date)
         }
+      })
+    })
+
+    it('Should return 401 if AddRole fails', async () => {
+      addRole.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
       })
     })
   })
