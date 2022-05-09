@@ -47,12 +47,26 @@ describe('AddRoleController', () => {
     ])
   })
 
-  describe('Add Role', () => {
+  describe('Add Role usecase', () => {
     it('Should call AddRole with correct values', async () => {
       await sut.handle({ body: { name, weight } })
 
       expect(addRole.perform).toHaveBeenCalledWith({ name, weight })
       expect(addRole.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 200 if AddRole succeeds', async () => {
+      const httpResponse = await sut.handle({ body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id,
+          name,
+          weight,
+          created_at: expect.any(Date)
+        }
+      })
     })
   })
 })
