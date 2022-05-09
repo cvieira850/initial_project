@@ -36,7 +36,7 @@ LoadRolesRepository {
   async load (params: LoadRolesRepository.Params): Promise<LoadRolesRepository.Result> {
     const roleRepo =  this.getRepository(Role)
     const roles = await roleRepo.find({select: ['id', 'name', 'weight', 'created_at']})
-    if(roles) {
+    if(roles.length > 0) {
       return roles
     }
   }
