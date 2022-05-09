@@ -60,7 +60,7 @@ describe('Role routes', () => {
   })
 
   describe('GET /roles', () => {
-    it('should return 200 with roles', async () => {
+    it('Should return 200 with roles', async () => {
       await request(app)
         .post('/api/roles')
         .send({ name: 'user', weight: 1 })
@@ -79,6 +79,14 @@ describe('Role routes', () => {
       expect(body[1].id).toBe(2)
       expect(body[1].name).toBe('admin')
       expect(body[1].weight).toBe(2)
+    })
+
+    it('Should return 401 if load roles fails', async () => {
+      const { status, body } = await request(app)
+        .get('/api/roles')
+
+      expect(status).toBe(401)
+      expect(body.error).toBe('Unauthorized')
     })
   })
 })
