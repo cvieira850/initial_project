@@ -49,4 +49,12 @@ describe('PgRoleRepository', () => {
         expect(event).toBeUndefined()
       })
     })
+
+    describe('AddRoleRepository', () => {
+      it('Should return an role on add success', async () => {
+        const event = await sut.add({ name: 'any_name', weight: 1 })
+
+        expect(event).toEqual({ id: '1', name: 'any_name', weight: 1, created_at: expect.any(Date) })
+      })
+    })
 })
