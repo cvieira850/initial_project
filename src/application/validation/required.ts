@@ -1,9 +1,9 @@
 import { RequiredFieldError } from '@/application/errors'
 import { Validator } from './validator'
 
-export class RequiredStringValidator implements Validator {
+export class RequiredValidator implements Validator {
   constructor (
-    private readonly value: string,
+    private readonly value: any,
     private readonly fieldName: string
   ) {}
 
