@@ -1,5 +1,5 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse, ok } from '@/application/helpers'
+import { HttpRequest, HttpResponse, ok, unauthorized } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { AddRole } from '@/domain/usecases'
 
@@ -10,8 +10,11 @@ export class AddRoleController extends Controller {
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     const role = await this.addRole.perform({ name: httpRequest.body.name, weight: httpRequest.body.weight })
+    if (role) {
+      return ok(role)
+    }
 
-    return ok(role)
+    return unauthorized()
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
