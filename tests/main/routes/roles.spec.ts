@@ -58,4 +58,27 @@ describe('Role routes', () => {
         .expect(400, { error: new RequiredFieldError('weight').message })
     })
   })
+
+  describe('GET /roles', () => {
+    it('should return 200 with roles', async () => {
+      await request(app)
+        .post('/api/roles')
+        .send({ name: 'user', weight: 1 })
+      await request(app)
+        .post('/api/roles')
+        .send({ name: 'admin', weight: 2 })
+
+      const { status, body } = await request(app)
+        .get('/api/roles')
+
+      expect(status).toBe(200)
+      expect(body.length).toBe(2)
+      expect(body[0].id).toBe(1)
+      expect(body[0].name).toBe('user')
+      expect(body[0].weight).toBe(1)
+      expect(body[1].id).toBe(2)
+      expect(body[1].name).toBe('admin')
+      expect(body[1].weight).toBe(2)
+    })
+  })
 })
