@@ -71,5 +71,13 @@ describe('LoadRoles Service', () => {
 
       expect(roleRepo.load).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if LoadRolesRepository throws', async () => {
+      roleRepo.load.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform(null)
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
