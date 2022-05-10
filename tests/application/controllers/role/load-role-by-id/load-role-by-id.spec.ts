@@ -61,4 +61,18 @@ describe('LoadRoleByIdController', () => {
       data: null
     })
   })
+
+  it('Should return 200 if LoaRoleById succeeds', async () => {
+    const httpResponse = await sut.handle({ params: { roleId } })
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: {
+        id: roleId,
+        name,
+        weight,
+        created_at: expect.any(Date)
+      }
+    })
+  })
 })
