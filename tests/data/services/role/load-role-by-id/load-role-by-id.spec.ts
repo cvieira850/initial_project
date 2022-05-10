@@ -60,5 +60,16 @@ describe('LoadRoleByIdService', () => {
 
       await expect(promise).resolves.toBeUndefined()
     })
+
+    it('Should return Role on LoadRoleByIdRepository success', async () => {
+      const role = await sut.perform({ id })
+
+      expect(role).toEqual({
+        id,
+        name,
+        weight,
+        created_at: expect.any(Date)
+      })
+    })
   })
 })
