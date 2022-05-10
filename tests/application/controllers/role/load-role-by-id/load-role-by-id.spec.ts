@@ -42,12 +42,23 @@ describe('LoadRoleByIdController', () => {
     ])
   })
 
-  describe('LoadById', () => {
-    it('Should call LoadById with correct id', async () => {
+  describe('LoaRoleById', () => {
+    it('Should call LoaRoleById with correct id', async () => {
       await sut.handle({ params: { roleId } })
 
       expect(loadRoleById.perform).toHaveBeenCalledWith({ id: roleId })
       expect(loadRoleById.perform).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('Should return 201 if LoaRoleById fails', async () => {
+    loadRoleById.perform.mockResolvedValueOnce(undefined)
+
+    const httpResponse = await sut.handle({ params: { roleId } })
+
+    expect(httpResponse).toEqual({
+      statusCode: 201,
+      data: null
     })
   })
 })
