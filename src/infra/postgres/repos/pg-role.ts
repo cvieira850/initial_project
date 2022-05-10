@@ -1,11 +1,12 @@
-import { AddRoleRepository, LoadRoleByNameRepository, LoadRolesRepository } from "@/data/protocols/db";
+import { AddRoleRepository, LoadRoleByIdRepository, LoadRoleByNameRepository, LoadRolesRepository } from "@/data/protocols/db";
 import { PgRepository } from "@/infra/postgres/repos/repository";
 import { Role } from "@/infra/postgres/entities";
 
 export class PgRoleRepository extends PgRepository implements
 LoadRoleByNameRepository,
 AddRoleRepository,
-LoadRolesRepository {
+LoadRolesRepository,
+LoadRoleByIdRepository {
   async loadByName (params: LoadRoleByNameRepository.Params): Promise<LoadRoleByNameRepository.Result>{
     const roleRepo =  this.getRepository(Role)
     const role = await roleRepo.findOne({ name: params.name})
@@ -38,6 +39,19 @@ LoadRolesRepository {
     const roles = await roleRepo.find({select: ['id', 'name', 'weight', 'created_at']})
     if(roles.length > 0) {
       return roles
+    }
+  }
+
+  async loadById (params: LoadRoleByIdRepository.Params): Promise<LoadRoleByIdRepository.Result> {
+    const roleRepo =  this.getRepository(Role)
+    const role = await roleRepo.findOne({id: params.id})
+    if(role) {
+      return {
+        id: role.id.toString(),
+        name: role.name,
+        weight: role.weight,
+        created_at: role.created_at
+      }
     }
   }
 }
