@@ -1,5 +1,5 @@
 import { Controller } from '@/application/controllers'
-import { HttpRequest, HttpResponse, noContent } from '@/application/helpers'
+import { HttpRequest, HttpResponse, noContent, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { LoadRoleById } from '@/domain/usecases'
 
@@ -9,8 +9,11 @@ export class LoadRoleByIdController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    await this.loadRoleById.perform({ id: httpRequest.params.roleId })
-    return noContent()
+    const role = await this.loadRoleById.perform({ id: httpRequest.params.roleId })
+    if (!role) {
+      return noContent()
+    }
+    return ok(role)
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
