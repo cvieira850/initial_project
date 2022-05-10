@@ -52,5 +52,13 @@ describe('LoadRoleByIdService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if LoadRoleByIdRepository returns undefined', async () => {
+      roleRepo.loadById.mockResolvedValueOnce(undefined)
+
+      const promise = sut.perform({ id })
+
+      await expect(promise).resolves.toBeUndefined()
+    })
   })
 })
