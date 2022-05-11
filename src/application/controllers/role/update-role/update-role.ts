@@ -1,7 +1,8 @@
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
 import { UpdateRole } from '@/domain/usecases'
+import { InvalidRequestError } from '@/data/errors'
 
 export class UpdateRoleController extends Controller {
   constructor (private readonly usecase: UpdateRole) {
@@ -9,13 +10,20 @@ export class UpdateRoleController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    await this.usecase.perform(
-      {
-        id: httpRequest.params.roleId,
-        name: httpRequest.body.name,
-        weight: httpRequest.body.weight
-      })
-    throw new Error('Method not implemented.')
+    try {
+      await this.usecase.perform(
+        {
+          id: httpRequest.params.roleId,
+          name: httpRequest.body.name,
+          weight: httpRequest.body.weight
+        })
+      return unauthorized()
+    } catch (error) {
+      if (error instanceof InvalidRequestError) {
+        return unauthorized()
+      }
+      throw error
+    }
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
