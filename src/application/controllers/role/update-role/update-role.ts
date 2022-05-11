@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
 import { UpdateRole } from '@/domain/usecases'
@@ -11,12 +11,15 @@ export class UpdateRoleController extends Controller {
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     try {
-      await this.usecase.perform(
+      const role = await this.usecase.perform(
         {
           id: httpRequest.params.roleId,
           name: httpRequest.body.name,
           weight: httpRequest.body.weight
         })
+      if (role) {
+        return ok(role)
+      }
       return unauthorized()
     } catch (error) {
       if (error instanceof InvalidRequestError) {
