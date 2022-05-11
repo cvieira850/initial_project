@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, unauthorized, ok } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized, ok, noContent } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
 import { UpdateRole } from '@/domain/usecases'
@@ -20,7 +20,7 @@ export class UpdateRoleController extends Controller {
       if (role) {
         return ok(role)
       }
-      return unauthorized()
+      return noContent()
     } catch (error) {
       if (error instanceof InvalidRequestError) {
         return unauthorized()
