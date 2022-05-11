@@ -36,5 +36,13 @@ describe('UpdateRoleService', () => {
       expect(roleRepo.loadById).toHaveBeenCalledWith({ id })
       expect(roleRepo.loadById).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if LoadRoleByIdRepository throws', async () => {
+      roleRepo.loadById.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ id })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
