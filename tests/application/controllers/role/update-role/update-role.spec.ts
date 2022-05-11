@@ -1,5 +1,5 @@
 import { Controller, UpdateRoleController } from '@/application/controllers'
-import { UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
 import { NumberValidator, RequiredValidator, StringValidator } from '@/application/validation'
 import { InvalidRequestError } from '@/data/errors'
 import { UpdateRole } from '@/domain/usecases'
@@ -87,6 +87,18 @@ describe('UpdateRole Repository', () => {
       expect(httpResponse).toEqual({
         statusCode: 201,
         data: null
+      })
+    })
+
+    it('Should rethrow if UpdateRole throw', async () => {
+      const error = new Error('infra_error')
+      usecase.perform.mockRejectedValueOnce(error)
+
+      const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 500,
+        data: new ServerError(error)
       })
     })
   })
