@@ -93,4 +93,14 @@ describe('PgRoleRepository', () => {
         expect(user).toBeUndefined()
       })
     })
+
+    describe('UpdateRoleRepository', () => {
+      it('Should return a role on update success', async () => {
+        await pgRoleRepo.save({ name: 'user', weight: 1 })
+
+        const result = await sut.update({ id: '1', name: 'admin', weight: 2 })
+
+        expect(result).toEqual({ id: '1', name: 'admin', weight: 2, created_at: expect.any(Date) })
+      })
+    })
 })
