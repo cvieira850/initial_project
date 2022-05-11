@@ -72,5 +72,13 @@ describe('UpdateRoleService', () => {
       expect(roleRepo.update).toHaveBeenCalledWith({ id, name, weight })
       expect(roleRepo.update).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if UpdateRoleRepository throws', async () => {
+      roleRepo.update.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ id })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
