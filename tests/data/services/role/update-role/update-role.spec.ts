@@ -80,5 +80,13 @@ describe('UpdateRoleService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined if UpdateRoleRepository returns undefined', async () => {
+      roleRepo.update.mockResolvedValueOnce(undefined)
+
+      const result = await sut.perform({ id })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
