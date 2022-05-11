@@ -1,4 +1,5 @@
 import { Controller, UpdateRoleController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors'
 import { NumberValidator, RequiredValidator, StringValidator } from '@/application/validation'
 import { UpdateRole } from '@/domain/usecases'
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -45,11 +46,22 @@ describe('UpdateRole Repository', () => {
   })
 
   describe('UpdateRole Usecase', () => {
-    it('Should call the usecase with correct params', async () => {
+    it('Should call the UpdateRole with correct params', async () => {
       await sut.handle({ params: { roleId }, body: { name, weight } })
 
       expect(usecase.perform).toHaveBeenCalledWith({ id: roleId, name, weight })
       expect(usecase.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 401 if UpdateRole throw nvalidRequestError', async () => {
+      usecase.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
+      })
     })
   })
 })
