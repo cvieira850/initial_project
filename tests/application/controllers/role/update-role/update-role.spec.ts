@@ -63,5 +63,19 @@ describe('UpdateRole Repository', () => {
         data: new UnauthorizedError()
       })
     })
+
+    it('Should return 200 if UpdateRole succeeds', async () => {
+      const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id: roleId,
+          name,
+          weight,
+          created_at: expect.any(Date)
+        }
+      })
+    })
   })
 })
