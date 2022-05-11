@@ -103,6 +103,23 @@ describe('PgRoleRepository', () => {
         expect(result).toEqual({ id: '1', name: 'admin', weight: 2, created_at: expect.any(Date) })
       })
 
+      it('Should return a role on update success with only name passed', async () => {
+        await pgRoleRepo.save({ name: 'user', weight: 1 })
+
+        const result = await sut.update({ id: '1', name: 'admin' })
+
+        expect(result).toEqual({ id: '1', name: 'admin', weight: 1, created_at: expect.any(Date) })
+      })
+
+
+      it('Should return a role on update success with only weight passed', async () => {
+        await pgRoleRepo.save({ name: 'user', weight: 1 })
+
+        const result = await sut.update({ id: '1', weight: 2 })
+
+        expect(result).toEqual({ id: '1', name: 'user', weight: 2, created_at: expect.any(Date) })
+      })
+
       it('Should return undefined if cant load a role', async () => {
         const result = await sut.update({ id: '1', name: 'admin', weight: 2 })
 
