@@ -114,4 +114,30 @@ describe('Role routes', () => {
       expect(body).toBeNull()
     })
   })
+
+  describe('PUT /roles/:roleId', () => {
+    it('Should return 200 with role', async () => {
+      await request(app)
+        .post('/api/roles')
+        .send({ name: 'user', weight: 1 })
+
+      const { status, body } = await request(app)
+        .put('/api/roles/1')
+        .send({ name: 'admin', weight: 2 })
+
+      expect(status).toBe(200)
+      expect(body.id).toBe('1')
+      expect(body.name).toBe('admin')
+      expect(body.weight).toBe(2)
+      expect(body.created_at).toBeDefined()
+    })
+
+    it('Should return 201 if dont have a role with this roleId', async () => {
+      const { status, body } = await request(app)
+        .get('/api/roles/1')
+
+      expect(status).toBe(201)
+      expect(body).toBeNull()
+    })
+  })
 })
