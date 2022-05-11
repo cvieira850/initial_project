@@ -11,5 +11,5 @@ export namespace UpdateRole {
     weight?: number
   }
 
-  export type Result = Role | Error
+  export type Result = Role | Error | undefined
 }
