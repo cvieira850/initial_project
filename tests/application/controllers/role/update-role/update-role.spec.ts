@@ -1,20 +1,27 @@
 import { Controller, UpdateRoleController } from '@/application/controllers'
 import { NumberValidator, RequiredValidator, StringValidator } from '@/application/validation'
+import { UpdateRole } from '@/domain/usecases'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('UpdateRole Repository', () => {
   let sut: UpdateRoleController
+  let usecase: MockProxy<UpdateRole>
   let roleId: string
   let name: string
   let weight: number
+  let created_at: Date
 
   beforeAll(() => {
     roleId = 'any_id'
     name = 'any_name'
     weight = 1
+    created_at = new Date()
+    usecase = mock()
+    usecase.perform.mockResolvedValue({ id: roleId, name, weight, created_at })
   })
 
   beforeEach(() => {
-    sut = new UpdateRoleController()
+    sut = new UpdateRoleController(usecase)
   })
 
   it('Should be an instance of Controller', () => {
@@ -35,5 +42,14 @@ describe('UpdateRole Repository', () => {
       new RequiredValidator(weight, 'weight'),
       new NumberValidator(weight, 'weight')
     ])
+  })
+
+  describe('UpdateRole Usecase', () => {
+    it('Should call the usecase with correct params', async () => {
+      await sut.handle({ params: { roleId }, body: { name, weight } })
+
+      expect(usecase.perform).toHaveBeenCalledWith({ id: roleId, name, weight })
+      expect(usecase.perform).toHaveBeenCalledTimes(1)
+    })
   })
 })
