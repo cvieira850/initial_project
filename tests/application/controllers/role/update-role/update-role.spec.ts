@@ -1,6 +1,7 @@
 import { Controller, UpdateRoleController } from '@/application/controllers'
 import { UnauthorizedError } from '@/application/errors'
 import { NumberValidator, RequiredValidator, StringValidator } from '@/application/validation'
+import { InvalidRequestError } from '@/data/errors'
 import { UpdateRole } from '@/domain/usecases'
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -54,7 +55,7 @@ describe('UpdateRole Repository', () => {
     })
 
     it('Should return 401 if UpdateRole throw nvalidRequestError', async () => {
-      usecase.perform.mockResolvedValueOnce(undefined)
+      usecase.perform.mockRejectedValueOnce(new InvalidRequestError('Role not found'))
 
       const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
 
@@ -75,6 +76,17 @@ describe('UpdateRole Repository', () => {
           weight,
           created_at: expect.any(Date)
         }
+      })
+    })
+
+    it('Should return 201 if UpdateRole fails', async () => {
+      usecase.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 201,
+        data: null
       })
     })
   })
