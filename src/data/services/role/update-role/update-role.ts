@@ -11,7 +11,9 @@ export class UpdateRoleService implements UpdateRole {
     if (!role) {
       throw new InvalidRequestError('Role not found')
     }
-    await this.roleRepo.update({ id: params.id, name: params.name, weight: params.weight })
-    return undefined
+    const updatedRole = await this.roleRepo.update({ id: params.id, name: params.name, weight: params.weight })
+    if (updatedRole) {
+      return updatedRole
+    }
   }
 }
