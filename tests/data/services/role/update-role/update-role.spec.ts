@@ -88,5 +88,16 @@ describe('UpdateRoleService', () => {
 
       expect(result).toBeUndefined()
     })
+
+    it('Should return a role on UpdateRoleRepository success', async () => {
+      const result = await sut.perform({ id, name, weight })
+
+      expect(result).toEqual({
+        id,
+        name: new_name,
+        weight: new_weight,
+        created_at: expect.any(Date)
+      })
+    })
   })
 })
