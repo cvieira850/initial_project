@@ -140,4 +140,26 @@ describe('Role routes', () => {
       expect(body).toBeNull()
     })
   })
+
+  describe('PUT /roles/:roleId', () => {
+    it('Should return 201 on success', async () => {
+      await request(app)
+        .post('/api/roles')
+        .send({ name: 'user', weight: 1 })
+
+      const { status, body } = await request(app)
+        .delete('/api/roles/1')
+
+      expect(status).toBe(201)
+      expect(body).toBeNull()
+    })
+
+    it('Should return 401 if dont have a role with this roleId', async () => {
+      const { status, body } = await request(app)
+        .delete('/api/roles/1')
+
+      expect(status).toBe(401)
+      expect(body).toEqual({ error: 'Unauthorized' })
+    })
+  })
 })

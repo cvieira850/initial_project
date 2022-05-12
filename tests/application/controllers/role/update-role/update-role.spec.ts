@@ -54,7 +54,7 @@ describe('UpdateRole Repository', () => {
       expect(usecase.perform).toHaveBeenCalledTimes(1)
     })
 
-    it('Should return 401 if UpdateRole throw nvalidRequestError', async () => {
+    it('Should return 401 if UpdateRole throw invalidRequestError', async () => {
       usecase.perform.mockRejectedValueOnce(new InvalidRequestError('Role not found'))
 
       const httpResponse = await sut.handle({ params: { roleId }, body: { name, weight } })
