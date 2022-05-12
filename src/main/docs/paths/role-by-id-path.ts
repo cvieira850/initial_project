@@ -94,5 +94,41 @@ export const roleByIdPath = {
         $ref: '#/components/serverError'
       }
     }
+  },
+  delete: {
+    security: [{
+      apiKeyAuth: []
+    }],
+    tags: ['Role'],
+    operationId: 'delete',
+    summary: 'API to delete role info',
+    parameters:
+    [
+      {
+        in: 'path',
+        name: 'roleId',
+        description: 'role id to delete data',
+        required: true,
+        schema: {
+          type: 'string',
+          format: 'uuid',
+          example: 'da35596c-faee-4ddb-8a4c-a3fa27306082'
+        }
+      }
+    ],
+    responses: {
+      201: {
+        description: 'Success'
+      },
+      400: {
+        $ref: '#/components/badRequest'
+      },
+      404: {
+        $ref: '#/components/notFound'
+      },
+      500: {
+        $ref: '#/components/serverError'
+      }
+    }
   }
 }
