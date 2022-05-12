@@ -2,6 +2,7 @@ import { DeleteRoleService } from '@/data/services'
 import { LoadRoleByIdRepository } from '@/data/protocols/db'
 
 import { mock, MockProxy } from 'jest-mock-extended'
+import { InvalidRequestError } from '@/data/errors'
 
 describe('DeleteRoleService', () => {
   let sut: DeleteRoleService
@@ -43,6 +44,14 @@ describe('DeleteRoleService', () => {
       const promise = sut.perform({ id })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+
+    it('Should return an error if LoadRoleByIdRepository returns undefined', async () => {
+      roleRepo.loadById.mockResolvedValueOnce(undefined)
+
+      const promise = sut.perform({ id })
+
+      await expect(promise).rejects.toThrow(new InvalidRequestError('Role not found'))
     })
   })
 })
