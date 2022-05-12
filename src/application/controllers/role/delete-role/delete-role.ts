@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
+import { HttpRequest, HttpResponse, noContent, unauthorized } from '@/application/helpers'
 import { Controller } from '@/application/controllers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { DeleteRole } from '@/domain/usecases'
@@ -12,7 +12,7 @@ export class DeleteRoleController extends Controller {
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     try {
       await this.usecase.perform({ id: httpRequest.params.roleId })
-      throw new Error('Method not implemented.')
+      return noContent()
     } catch (error) {
       if (error instanceof InvalidRequestError) {
         return unauthorized()
