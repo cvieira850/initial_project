@@ -8,7 +8,6 @@ export class DeleteRoleService implements DeleteRole {
     if (!role) {
       throw new InvalidRequestError('Role not found')
     }
-    await this.roleRepo.delete({ id: params.id })
-    return undefined
+    return await this.roleRepo.delete({ id: params.id })
   }
 }
