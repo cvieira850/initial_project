@@ -1,5 +1,5 @@
 import { Controller, DeleteRoleController } from '@/application/controllers'
-import { UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
 import { RequiredValidator, StringValidator } from '@/application/validation'
 import { InvalidRequestError } from '@/data/errors'
 import { DeleteRole } from '@/domain/usecases'
@@ -61,6 +61,18 @@ describe('DeleteRole Controller', () => {
       expect(httpResponse).toEqual({
         statusCode: 201,
         data: null
+      })
+    })
+
+    it('Should rethrow if DeleteRole throw', async () => {
+      const error = new Error('infra_error')
+      usecase.perform.mockRejectedValueOnce(error)
+
+      const httpResponse = await sut.handle({ params: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 500,
+        data: new ServerError(error)
       })
     })
   })
