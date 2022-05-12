@@ -54,5 +54,14 @@ describe('DeleteRole Controller', () => {
         data: new UnauthorizedError()
       })
     })
+
+    it('Should return 201 if DeleteRole succeeds', async () => {
+      const httpResponse = await sut.handle({ params: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 201,
+        data: null
+      })
+    })
   })
 })
