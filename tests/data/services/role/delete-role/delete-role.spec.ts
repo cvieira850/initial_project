@@ -71,5 +71,11 @@ describe('DeleteRoleService', () => {
 
       await expect(promise).rejects.toThrow(new Error())
     })
+
+    it('Should return undefined on DeleteRoleRepository success', async () => {
+      const result = await sut.perform({ id })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
