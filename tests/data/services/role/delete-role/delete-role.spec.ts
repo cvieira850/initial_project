@@ -63,5 +63,13 @@ describe('DeleteRoleService', () => {
       expect(roleRepo.delete).toHaveBeenCalledWith({ id })
       expect(roleRepo.delete).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if DeleteRoleRepository throws', async () => {
+      roleRepo.delete.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ id })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
