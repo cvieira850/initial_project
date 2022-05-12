@@ -1,5 +1,7 @@
 import { Controller, DeleteRoleController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors'
 import { RequiredValidator, StringValidator } from '@/application/validation'
+import { InvalidRequestError } from '@/data/errors'
 import { DeleteRole } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -40,6 +42,17 @@ describe('DeleteRole Controller', () => {
 
       expect(usecase.perform).toHaveBeenCalledWith({ id: roleId })
       expect(usecase.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 401 if DeleteRole throw invalidRequestError', async () => {
+      usecase.perform.mockRejectedValueOnce(new InvalidRequestError('Role not found'))
+
+      const httpResponse = await sut.handle({ params: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
+      })
     })
   })
 })
