@@ -1,12 +1,12 @@
 import { DeleteRoleService } from '@/data/services'
-import { LoadRoleByIdRepository } from '@/data/protocols/db'
+import { LoadRoleByIdRepository, DeleteRoleRepository } from '@/data/protocols/db'
+import { InvalidRequestError } from '@/data/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
-import { InvalidRequestError } from '@/data/errors'
 
 describe('DeleteRoleService', () => {
   let sut: DeleteRoleService
-  let roleRepo: MockProxy<LoadRoleByIdRepository>
+  let roleRepo: MockProxy<LoadRoleByIdRepository & DeleteRoleRepository>
   let id: string
   let name: string
   let weight: number
@@ -24,6 +24,7 @@ describe('DeleteRoleService', () => {
       weight,
       created_at
     })
+    roleRepo.delete.mockResolvedValue(undefined)
   })
 
   beforeEach(() => {
@@ -52,6 +53,15 @@ describe('DeleteRoleService', () => {
       const promise = sut.perform({ id })
 
       await expect(promise).rejects.toThrow(new InvalidRequestError('Role not found'))
+    })
+  })
+
+  describe('DeleteRoleRepository', () => {
+    it('Should call DeleteRoleRepository with correct id', async () => {
+      await sut.perform({ id })
+
+      expect(roleRepo.delete).toHaveBeenCalledWith({ id })
+      expect(roleRepo.delete).toHaveBeenCalledTimes(1)
     })
   })
 })
