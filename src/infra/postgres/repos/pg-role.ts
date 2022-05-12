@@ -1,4 +1,4 @@
-import { AddRoleRepository, LoadRoleByIdRepository, LoadRoleByNameRepository, LoadRolesRepository, UpdateRoleRepository } from "@/data/protocols/db";
+import { AddRoleRepository, DeleteRoleRepository, LoadRoleByIdRepository, LoadRoleByNameRepository, LoadRolesRepository, UpdateRoleRepository } from "@/data/protocols/db";
 import { PgRepository } from "@/infra/postgres/repos/repository";
 import { Role } from "@/infra/postgres/entities";
 
@@ -7,7 +7,8 @@ LoadRoleByNameRepository,
 AddRoleRepository,
 LoadRolesRepository,
 LoadRoleByIdRepository,
-UpdateRoleRepository {
+UpdateRoleRepository,
+DeleteRoleRepository {
   async loadByName (params: LoadRoleByNameRepository.Params): Promise<LoadRoleByNameRepository.Result>{
     const roleRepo =  this.getRepository(Role)
     const role = await roleRepo.findOne({ name: params.name})
@@ -73,6 +74,15 @@ UpdateRoleRepository {
           created_at: role.created_at
         }
       }
+    }
+  }
+
+  async delete (params: DeleteRoleRepository.Params): Promise<DeleteRoleRepository.Result> {
+    const roleRepo =  this.getRepository(Role)
+    const role = await roleRepo.findOne({id: params.id})
+    if(role) {
+      roleRepo.softDelete({id: params.id})
+      return undefined
     }
   }
 }

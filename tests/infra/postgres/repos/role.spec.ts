@@ -126,4 +126,11 @@ describe('PgRoleRepository', () => {
         expect(result).toBeUndefined()
       })
     })
+    describe('DeleteRoleRepository', () => {
+      it('Should return undefined on delete success', async () => {
+        const result = await sut.delete({ id: '1' })
+
+        expect(result).toBeUndefined()
+      })
+    })
 })
