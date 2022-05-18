@@ -1,18 +1,35 @@
-import { Controller, UpdateAccountUserController } from '@/application/controllers'
+import { Controller, UpdateAccountRoleController } from '@/application/controllers'
 import { RequiredValidator, StringValidator } from '@/application/validation'
+import { UpdateAccountRole } from '@/domain/usecases'
 
-describe('UpdateAccountUserController', () => {
-  let sut: UpdateAccountUserController
+import { mock, MockProxy } from 'jest-mock-extended'
+
+describe('UpdateAccountRoleController', () => {
+  let sut: UpdateAccountRoleController
+  let updateAccountRole: MockProxy<UpdateAccountRole>
   let userId: string
   let roleId: string
+  let role: string
+  let email: string
+  let name: string
 
   beforeAll(() => {
     userId = 'any_id'
     roleId = 'any_role_id'
+    role = 'any_role'
+    email = 'any_email'
+    name = 'any_name'
+    updateAccountRole = mock()
+    updateAccountRole.perform.mockResolvedValue({
+      id: userId,
+      role,
+      email,
+      name
+    })
   })
 
   beforeEach(() => {
-    sut = new UpdateAccountUserController()
+    sut = new UpdateAccountRoleController(updateAccountRole)
   })
 
   it('Should be an instance of Controller', () => {
@@ -28,5 +45,14 @@ describe('UpdateAccountUserController', () => {
       new RequiredValidator(roleId, 'roleId'),
       new StringValidator(roleId, 'roleId')
     ])
+  })
+
+  describe('UpdateAccountRole', () => {
+    it('Should call UpdateAccountRole with correct values', async () => {
+      await sut.handle({ params: { userId }, body: { roleId } })
+
+      expect(updateAccountRole.perform).toHaveBeenCalledWith({ id: userId, roleId })
+      expect(updateAccountRole.perform).toHaveBeenCalledTimes(1)
+    })
   })
 })
