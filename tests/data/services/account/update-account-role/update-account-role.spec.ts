@@ -1,12 +1,12 @@
 import { UpdateAccountRoleService } from '@/data/services'
-import { LoadRoleByIdRepository, LoadAccountByIdRepository } from '@/data/protocols/db'
+import { LoadRoleByIdRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository } from '@/data/protocols/db'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('Update Account Role Usecase', () => {
   let sut: UpdateAccountRoleService
   let roleRepo: MockProxy<LoadRoleByIdRepository>
-  let accountRepo: MockProxy<LoadAccountByIdRepository>
+  let accountRepo: MockProxy<LoadAccountByIdRepository & UpdateAccountRoleRepository>
   let id: string
   let role_id: string
   let name: string
@@ -34,6 +34,12 @@ describe('Update Account Role Usecase', () => {
     })
     accountRepo = mock()
     accountRepo.loadById.mockResolvedValue({
+      id,
+      name: name_account,
+      email,
+      role
+    })
+    accountRepo.updateAccountRole.mockResolvedValue({
       id,
       name: name_account,
       email,
@@ -92,6 +98,15 @@ describe('Update Account Role Usecase', () => {
       const promise = sut.perform({ id, roleId: role_id })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('UpdateAccountRole Repository', () => {
+    it('should call UpdateAccountRoleRepository with correct params', async () => {
+      await sut.perform({ id, roleId: role_id })
+
+      expect(accountRepo.updateAccountRole).toHaveBeenCalledWith({ id, roleId: role_id })
+      expect(accountRepo.updateAccountRole).toHaveBeenCalledTimes(1)
     })
   })
 })
