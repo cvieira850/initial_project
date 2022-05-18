@@ -11,7 +11,7 @@ export class UpdateAccountRoleService implements UpdateAccountRole {
     if (role) {
       const user = await this.accountRepo.loadById({ id: params.id })
       if (user) {
-        await this.accountRepo.updateAccountRole({ id: params.id, roleId: params.roleId })
+        return await this.accountRepo.updateAccountRole({ id: params.id, roleId: params.roleId })
       }
     }
     return undefined
