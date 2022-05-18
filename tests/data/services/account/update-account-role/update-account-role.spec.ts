@@ -124,5 +124,16 @@ describe('Update Account Role Usecase', () => {
 
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should return an account on UpdateAccountRoleRepository success', async () => {
+      const response = await sut.perform({ id, roleId: role_id })
+
+      expect(response).toEqual({
+        id,
+        name: name_account,
+        email,
+        role
+      })
+    })
   })
 })
