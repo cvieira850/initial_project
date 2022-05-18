@@ -6,7 +6,8 @@ import {
   usersPath,
   eventByIdPath,
   rolePath,
-  roleByIdPath
+  roleByIdPath,
+  usersRolePath
 } from './paths/'
 
 export default {
@@ -17,5 +18,6 @@ export default {
   '/events': eventPath,
   '/events/{eventId}': eventByIdPath,
   '/roles': rolePath,
-  '/roles/{roleId}': roleByIdPath
+  '/roles/{roleId}': roleByIdPath,
+  '/users/{userId}/role': usersRolePath
 }
