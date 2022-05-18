@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
 import { UpdateAccountRole } from '@/domain/usecases'
@@ -9,7 +9,10 @@ export class UpdateAccountRoleController extends Controller {
   }
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    await this.updateAccountRole.perform({ id: httpRequest.params.userId, roleId: httpRequest.body.roleId })
+    const user = await this.updateAccountRole.perform({ id: httpRequest.params.userId, roleId: httpRequest.body.roleId })
+    if (user) {
+      return ok(user)
+    }
     return unauthorized()
   }
 
