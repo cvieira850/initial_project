@@ -1,4 +1,5 @@
 import { Controller, UpdateAccountRoleController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors'
 import { RequiredValidator, StringValidator } from '@/application/validation'
 import { UpdateAccountRole } from '@/domain/usecases'
 
@@ -53,6 +54,17 @@ describe('UpdateAccountRoleController', () => {
 
       expect(updateAccountRole.perform).toHaveBeenCalledWith({ id: userId, roleId })
       expect(updateAccountRole.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 401 if UpdateAccountRole return undefined', async () => {
+      updateAccountRole.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ params: { userId }, body: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
+      })
     })
   })
 })
