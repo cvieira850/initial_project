@@ -8,7 +8,9 @@ import {
   eventSchema,
   roleParamsSchema,
   roleSchema,
-  rolesSchema
+  rolesSchema,
+  userRoleSchema,
+  accountRoleSchema
 } from './schemas/'
 
 export default {
@@ -21,5 +23,7 @@ export default {
   event: eventSchema,
   roleParams: roleParamsSchema,
   role: roleSchema,
-  roles: rolesSchema
+  roles: rolesSchema,
+  userRole: userRoleSchema,
+  accountRole: accountRoleSchema
 }
