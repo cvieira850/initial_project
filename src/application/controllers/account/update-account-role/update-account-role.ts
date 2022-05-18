@@ -1,9 +1,15 @@
 import { HttpRequest, HttpResponse } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
+import { UpdateAccountRole } from '@/domain/usecases'
 
-export class UpdateAccountUserController extends Controller {
+export class UpdateAccountRoleController extends Controller {
+  constructor (private readonly updateAccountRole: UpdateAccountRole) {
+    super()
+  }
+
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
+    await this.updateAccountRole.perform({ id: httpRequest.params.userId, roleId: httpRequest.body.roleId })
     throw new Error('Method not implemented.')
   }
 
