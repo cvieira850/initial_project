@@ -32,11 +32,19 @@ describe('Update Account Role Usecase', () => {
   })
 
   describe('LoadRoleById Repository', () => {
-    it('should call LoadRoleById with correct params', async () => {
+    it('should call LoadRoleByIdRepository with correct params', async () => {
       await sut.perform({ id, roleId: role_id })
 
       expect(roleRepo.loadById).toHaveBeenCalledWith({ id: role_id })
       expect(roleRepo.loadById).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return undefined if LoadRoleByIdRepository dont return a role', async () => {
+      roleRepo.loadById.mockResolvedValueOnce(undefined)
+
+      const result = await sut.perform({ id, roleId: role_id })
+
+      expect(result).toBeUndefined()
     })
   })
 })
