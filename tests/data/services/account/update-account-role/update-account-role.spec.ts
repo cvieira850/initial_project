@@ -77,5 +77,13 @@ describe('Update Account Role Usecase', () => {
       expect(accountRepo.loadById).toHaveBeenCalledWith({ id })
       expect(accountRepo.loadById).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return undefined if LoadAccountByIdRepository dont return an account', async () => {
+      accountRepo.loadById.mockResolvedValueOnce(undefined)
+
+      const result = await sut.perform({ id, roleId: role_id })
+
+      expect(result).toBeUndefined()
+    })
   })
 })
