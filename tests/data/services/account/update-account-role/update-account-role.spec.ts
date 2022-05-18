@@ -85,5 +85,13 @@ describe('Update Account Role Usecase', () => {
 
       expect(result).toBeUndefined()
     })
+
+    it('Should rethrow if LoadAccountByIdRepository throws', async () => {
+      accountRepo.loadById.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ id, roleId: role_id })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
