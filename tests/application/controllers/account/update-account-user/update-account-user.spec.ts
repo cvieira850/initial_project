@@ -1,5 +1,5 @@
 import { Controller, UpdateAccountRoleController } from '@/application/controllers'
-import { UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
 import { RequiredValidator, StringValidator } from '@/application/validation'
 import { UpdateAccountRole } from '@/domain/usecases'
 
@@ -78,6 +78,18 @@ describe('UpdateAccountRoleController', () => {
           role,
           email
         }
+      })
+    })
+
+    it('Should rethrow if UpdateAccountRole throw', async () => {
+      const error = new Error('infra_error')
+      updateAccountRole.perform.mockRejectedValueOnce(error)
+
+      const httpResponse = await sut.handle({ params: { userId }, body: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 500,
+        data: new ServerError(error)
       })
     })
   })
