@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, unauthorized } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { Controller } from '@/application/controllers'
 import { UpdateAccountRole } from '@/domain/usecases'
@@ -10,7 +10,7 @@ export class UpdateAccountRoleController extends Controller {
 
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
     await this.updateAccountRole.perform({ id: httpRequest.params.userId, roleId: httpRequest.body.roleId })
-    throw new Error('Method not implemented.')
+    return unauthorized()
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
