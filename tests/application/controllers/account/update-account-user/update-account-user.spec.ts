@@ -66,5 +66,19 @@ describe('UpdateAccountRoleController', () => {
         data: new UnauthorizedError()
       })
     })
+
+    it('Should return 200 on UpdateAccountRole succeeds', async () => {
+      const httpResponse = await sut.handle({ params: { userId }, body: { roleId } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id: userId,
+          name,
+          role,
+          email
+        }
+      })
+    })
   })
 })
