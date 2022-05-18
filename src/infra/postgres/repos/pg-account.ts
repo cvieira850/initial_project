@@ -1,4 +1,4 @@
-import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository } from "@/data/protocols/db";
+import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository } from "@/data/protocols/db";
 import { User, Role } from "@/infra/postgres/entities";
 import { PgRepository } from "./repository";
 
@@ -12,7 +12,8 @@ export class PgAccountRepository extends PgRepository implements
   AddAccountRepository,
   UpdateAccessTokenRepository,
   LoadAccountByTokenRepository,
-  LoadAccountByIdRepository
+  LoadAccountByIdRepository,
+  UpdateAccountRoleRepository
 {
 
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
@@ -113,6 +114,26 @@ export class PgAccountRepository extends PgRepository implements
           email: pgUser.email,
           role: userRole.name,
           access_token: pgUser.access_token
+        }
+      }
+    }
+  }
+
+  async updateAccountRole (params: UpdateAccountRoleRepository.Params) : Promise<UpdateAccountRoleRepository.Result> {
+    const pgUserRepo = this.getRepository(User)
+    const pgRoleRepo = this.getRepository(Role)
+
+    const pgUser = await pgUserRepo.findOne({id: params.id})
+    if(pgUser) {
+      const newRole = await pgRoleRepo.findOne({id: params.roleId})
+      if(newRole) {
+        pgUser.role_id = newRole.id
+        await pgUserRepo.save(pgUser)
+        return {
+          id: pgUser.id.toString(),
+          name: pgUser.name,
+          email: pgUser.email,
+          role: newRole.name
         }
       }
     }
