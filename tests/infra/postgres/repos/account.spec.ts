@@ -147,4 +147,16 @@ describe('AccountPgRepository', () => {
       expect(user).toBeUndefined()
     })
   })
+
+  describe('UpdateAccountRole', () => {
+    it('Should return an account on updateAccountRole', async () => {
+      await pgRoleRepo.save({name: 'user', weight: 1})
+      await pgRoleRepo.save({name: 'admin', weight: 2})
+      await pgUserRepo.save({ email: 'any_email', name: 'any_name', password: '1234', role_id: '1' })
+
+      const user = await sut.updateAccountRole({ id: '1', roleId: '2' })
+
+      expect(user).toEqual({ id: '1', name: 'any_name', role: 'admin', email: 'any_email' })
+    })
+  });
 })
