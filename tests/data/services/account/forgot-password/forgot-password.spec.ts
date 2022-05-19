@@ -34,7 +34,7 @@ describe('ForgotPassword Service', () => {
 
   describe('LoadAccountByEmail Repository', () => {
     it('Should call LoadAccountByEmail with correct email', async () => {
-      await sut.perform({ mail: email })
+      await sut.perform({ email })
 
       expect(accountRepo.loadByEmail).toHaveBeenCalledWith({ email })
       expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
@@ -43,7 +43,7 @@ describe('ForgotPassword Service', () => {
     it('Should rethrow if LoadAccountByEmailRepository throws', async () => {
       accountRepo.loadByEmail.mockRejectedValueOnce(new Error())
 
-      const promise = sut.perform({ mail: email })
+      const promise = sut.perform({ email })
 
       await expect(promise).rejects.toThrow()
     })
@@ -51,9 +51,21 @@ describe('ForgotPassword Service', () => {
     it('Should return undefined if LoadAccountByEmailRepository returns undefined', async () => {
       accountRepo.loadByEmail.mockResolvedValueOnce(undefined)
 
-      const response = await sut.perform({ mail: email })
+      const response = await sut.perform({ email })
 
       expect(response).toBeUndefined()
+    })
+
+    it('Should return an account on success', async () => {
+      const response = await sut.perform({ email })
+
+      expect(response).toEqual({
+        id,
+        name,
+        email,
+        password,
+        reset_password_token
+      })
     })
   })
 })
