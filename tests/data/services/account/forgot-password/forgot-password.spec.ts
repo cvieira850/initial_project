@@ -1,11 +1,13 @@
 import { ForgotPasswordService } from '@/data/services'
 import { LoadAccountByEmailRepository } from '@/data/protocols/db'
+import { SendEmailNodeMailer } from '@/infra/email'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('ForgotPassword Service', () => {
   let sut: ForgotPasswordService
   let accountRepo: MockProxy<LoadAccountByEmailRepository>
+  let sendEmail: MockProxy<SendEmailNodeMailer>
   let id: string
   let name: string
   let email: string
@@ -26,10 +28,12 @@ describe('ForgotPassword Service', () => {
       password,
       reset_password_token
     })
+    sendEmail = mock()
+    sendEmail.send.mockResolvedValue(true)
   })
 
   beforeEach(() => {
-    sut = new ForgotPasswordService(accountRepo)
+    sut = new ForgotPasswordService(accountRepo, sendEmail)
   })
 
   describe('LoadAccountByEmail Repository', () => {
@@ -66,6 +70,14 @@ describe('ForgotPassword Service', () => {
         password,
         reset_password_token
       })
+    })
+  })
+
+  describe('Send Email', () => {
+    it('Should call sendEmail with valid id once', async () => {
+      await sut.perform({ email })
+
+      expect(sendEmail.send).toHaveBeenCalledTimes(1)
     })
   })
 })
