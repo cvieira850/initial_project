@@ -6,7 +6,7 @@ export interface ForgotPassword {
 
 export namespace ForgotPassword {
   export type Params = {
-    mail: string
+    email: string
   }
 
   export type Result = Account | undefined
