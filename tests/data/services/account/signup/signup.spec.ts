@@ -1,6 +1,7 @@
 import { AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '@/data/protocols/db'
 import { Encrypt, Hash } from '@/data/protocols/cryptography'
 import { SignupService } from '@/data/services/account/signup/signup'
+import { SendEmailNodeMailer } from '@/infra/email'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -9,6 +10,7 @@ describe('SignupService', () => {
   let accountRepo: MockProxy<LoadAccountByEmailRepository & AddAccountRepository & UpdateAccessTokenRepository>
   let hash: MockProxy<Hash>
   let encrypt: MockProxy<Encrypt>
+  let sendEmail: MockProxy<SendEmailNodeMailer>
   let email: string
   let name: string
   let password: string
@@ -28,6 +30,8 @@ describe('SignupService', () => {
     hash = mock()
     hash.hash.mockResolvedValue(hashedPassword)
     accountRepo = mock()
+    sendEmail = mock()
+    sendEmail.send.mockResolvedValue(true)
     accountRepo.add.mockResolvedValue({
       id,
       name,
@@ -44,7 +48,7 @@ describe('SignupService', () => {
   })
 
   beforeEach(() => {
-    sut = new SignupService(accountRepo, hash, encrypt)
+    sut = new SignupService(accountRepo, hash, encrypt, sendEmail)
   })
 
   describe('LoadAccountByEmail Repository', () => {
@@ -171,6 +175,22 @@ describe('SignupService', () => {
       const result = await sut.perform({ email, name, password })
 
       expect(result).toBeUndefined()
+    })
+  })
+
+  describe('SendEmailNodeMailer', () => {
+    it('Should call sendEmail with valid id once', async () => {
+      await sut.perform({ email, name, password })
+
+      expect(sendEmail.send).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return undefined if sendEmail return false', async () => {
+      sendEmail.send.mockResolvedValueOnce(false)
+
+      const response = await sut.perform({ email, name, password })
+
+      expect(response).toBeUndefined()
     })
   })
 })
