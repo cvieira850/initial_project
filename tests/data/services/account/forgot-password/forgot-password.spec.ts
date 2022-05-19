@@ -1,0 +1,43 @@
+import { ForgotPasswordService } from '@/data/services'
+import { LoadAccountByEmailRepository } from '@/data/protocols/db'
+
+import { mock, MockProxy } from 'jest-mock-extended'
+
+describe('ForgotPassword Service', () => {
+  let sut: ForgotPasswordService
+  let accountRepo: MockProxy<LoadAccountByEmailRepository>
+  let id: string
+  let name: string
+  let email: string
+  let password: string
+  let reset_password_token: string
+
+  beforeAll(() => {
+    id = 'any_id'
+    name = 'any_name'
+    email = 'any_email'
+    password = 'any_password'
+    reset_password_token = 'any_reset_password_token'
+    accountRepo = mock()
+    accountRepo.loadByEmail.mockResolvedValue({
+      id,
+      name,
+      email,
+      password,
+      reset_password_token
+    })
+  })
+
+  beforeEach(() => {
+    sut = new ForgotPasswordService(accountRepo)
+  })
+
+  describe('LoadAccountByEmail Repository', () => {
+    it('Should call LoadAccountByEmail with correct email', async () => {
+      await sut.perform({ mail: email })
+
+      expect(accountRepo.loadByEmail).toHaveBeenCalledWith({ email })
+      expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
+    })
+  })
+})
