@@ -39,5 +39,13 @@ describe('ForgotPassword Service', () => {
       expect(accountRepo.loadByEmail).toHaveBeenCalledWith({ email })
       expect(accountRepo.loadByEmail).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if LoadAccountByEmailRepository throws', async () => {
+      accountRepo.loadByEmail.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ mail: email })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
