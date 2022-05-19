@@ -47,5 +47,13 @@ describe('ForgotPassword Service', () => {
 
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should return undefined if LoadAccountByEmailRepository returns undefined', async () => {
+      accountRepo.loadByEmail.mockResolvedValueOnce(undefined)
+
+      const response = await sut.perform({ mail: email })
+
+      expect(response).toBeUndefined()
+    })
   })
 })
