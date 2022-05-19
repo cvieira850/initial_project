@@ -79,5 +79,13 @@ describe('ForgotPassword Service', () => {
 
       expect(sendEmail.send).toHaveBeenCalledTimes(1)
     })
+
+    it('Should return undefined if sendEmail return false', async () => {
+      sendEmail.send.mockResolvedValueOnce(false)
+
+      const response = await sut.perform({ email })
+
+      expect(response).toBeUndefined()
+    })
   })
 })
