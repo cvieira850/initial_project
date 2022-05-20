@@ -16,7 +16,7 @@ describe('ForgotPassword Controller', () => {
 
   beforeAll(() => {
     id = 'any_id'
-    email = 'any_email'
+    email = 'any_email@mail.com'
     password = 'any_password'
     name = 'any_name'
     role = 'any_role'
@@ -56,6 +56,15 @@ describe('ForgotPassword Controller', () => {
 
       expect(forgotPassword.perform).toHaveBeenCalledWith({ email })
       expect(forgotPassword.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 201 on success', async () => {
+      const httpResponse = await sut.handle({ body: { email } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 201,
+        data: null
+      })
     })
   })
 })
