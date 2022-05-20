@@ -66,5 +66,16 @@ describe('ForgotPassword Controller', () => {
         data: null
       })
     })
+
+    it('Should return 201 if forgotPassword return undefined', async () => {
+      forgotPassword.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ body: { email } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 201,
+        data: null
+      })
+    })
   })
 })
