@@ -1,4 +1,5 @@
 import { Controller, ForgotPasswordController } from '@/application/controllers'
+import { ServerError } from '@/application/errors'
 import { EmailValidation, EmailValidatorAdapter, RequiredValidator, StringValidator } from '@/application/validation'
 import { ForgotPassword } from '@/domain/usecases'
 
@@ -75,6 +76,17 @@ describe('ForgotPassword Controller', () => {
       expect(httpResponse).toEqual({
         statusCode: 201,
         data: null
+      })
+    })
+
+    it('Should return 500 if Signup throws', async () => {
+      const error = new Error('infra_error')
+      forgotPassword.perform.mockRejectedValueOnce(error)
+      const httpResponse = await sut.handle({ body: { email } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 500,
+        data: new ServerError(error)
       })
     })
   })
