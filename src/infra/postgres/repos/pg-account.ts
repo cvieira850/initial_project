@@ -1,4 +1,4 @@
-import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository } from "@/data/protocols/db";
+import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository, UpdateResetPasswordTokenRepository } from "@/data/protocols/db";
 import { User, Role } from "@/infra/postgres/entities";
 import { PgRepository } from "./repository";
 
@@ -13,9 +13,9 @@ export class PgAccountRepository extends PgRepository implements
   UpdateAccessTokenRepository,
   LoadAccountByTokenRepository,
   LoadAccountByIdRepository,
-  UpdateAccountRoleRepository
+  UpdateAccountRoleRepository,
+  UpdateResetPasswordTokenRepository
 {
-
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
     const pgUserRepo = this.getRepository(User)
     const pgUser = await pgUserRepo.findOne({ email: params.email })
@@ -134,6 +134,29 @@ export class PgAccountRepository extends PgRepository implements
           name: pgUser.name,
           email: pgUser.email,
           role: newRole.name
+        }
+      }
+    }
+  }
+
+  async updateResetPasswordToken (params: UpdateResetPasswordTokenRepository.Params): Promise<UpdateResetPasswordTokenRepository.Result> {
+    const pgUserRepo = this.getRepository(User)
+    const pgRoleRepo = this.getRepository(Role)
+    let date = new Date()
+    const pgUser = await pgUserRepo.findOne({id: params.id})
+    if(pgUser) {
+      const role = await pgRoleRepo.findOne({id: pgUser.role_id})
+      if(role) {
+        pgUser.reset_password_token = params.token
+        pgUser.reset_password_token_expires_at = new Date(date.setDate(date.getDate() + 2))
+        await pgUserRepo.save(pgUser)
+        return {
+          id: pgUser.id.toString(),
+          name: pgUser.name,
+          email: pgUser.email,
+          role: role.name,
+          password: pgUser.password,
+          reset_password_token: pgUser.reset_password_token,
         }
       }
     }
