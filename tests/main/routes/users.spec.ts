@@ -1,10 +1,10 @@
 import { User } from '@/infra/postgres/entities'
 import { PgConnection } from '@/infra/postgres/helpers'
-// import { app } from '@/main/config/app'
+import { app } from '@/main/config/app'
 import { makeFakeDb } from '@/tests/infra/postgres/mocks'
 
 import { IBackup } from 'pg-mem'
-// import request from 'supertest'
+import request from 'supertest'
 
 describe('Users Route', () => {
   let backup: IBackup
@@ -61,5 +61,20 @@ describe('Users Route', () => {
 
   //   expect(result.status).toBe(403)
   // })
+  })
+
+  describe('POST /users/forgot-password', () => {
+    it('should return 201', async () => {
+      await request(app)
+        .post('/api/signup')
+        .send({ email: 'teste@teste.com', name: 'user', password: '123456', passwordConfirmation: '123456' })
+
+      const { status, body: bodyResult } = await request(app)
+        .post('/api/users/forgot-password')
+        .send({ email: 'teste@teste.com' })
+
+      expect(status).toBe(201)
+      expect(bodyResult).toBeNull()
+    })
   })
 })

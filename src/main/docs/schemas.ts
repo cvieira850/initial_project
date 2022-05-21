@@ -10,13 +10,15 @@ import {
   roleSchema,
   rolesSchema,
   userRoleSchema,
-  accountRoleSchema
+  accountRoleSchema,
+  forgotParamsSchema
 } from './schemas/'
 
 export default {
   login: loginSchema,
   error: errorSchema,
   signupParamsSchema: signupParamsSchema,
+  forgotParamsSchema: forgotParamsSchema,
   loginParams: loginParamsSchema,
   user: userSchema,
   eventParams: eventParamsSchema,
