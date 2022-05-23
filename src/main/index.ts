@@ -1,6 +1,6 @@
 import './config/module-alias'
 import { env } from '@/main/config/env'
-import { PgConnection } from '@/infra/postgres/helpers'
+import { PgConnection } from '@/infra/pg/helpers'
 
 import 'reflect-metadata'
 

@@ -1,8 +1,8 @@
 import { InvalidParamError, RequiredFieldError } from '@/application/errors'
-import { User } from '@/infra/postgres/entities'
-import { PgConnection } from '@/infra/postgres/helpers'
+import { User } from '@/infra/pg/entities'
+import { PgConnection } from '@/infra/pg/helpers'
 import { app } from '@/main/config/app'
-import { makeFakeDb } from '@/tests/infra/postgres/mocks'
+import { makeFakeDb } from '@/../tests/infra/pg/mocks'
 
 import { IBackup } from 'pg-mem'
 import request from 'supertest'

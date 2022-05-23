@@ -1,6 +1,6 @@
-import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository, UpdateResetPasswordTokenRepository } from "@/data/protocols/db";
-import { User, Role } from "@/infra/postgres/entities";
-import { PgRepository } from "./repository";
+import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository, UpdateResetPasswordTokenRepository } from '@/data/protocols/db'
+import { User, Role } from '@/infra/pg/entities'
+import { PgRepository } from './repository'
 
 type LoadParams = LoadAccountByEmailRepository.Params
 type LoadResult = LoadAccountByEmailRepository.Result
@@ -14,8 +14,7 @@ export class PgAccountRepository extends PgRepository implements
   LoadAccountByTokenRepository,
   LoadAccountByIdRepository,
   UpdateAccountRoleRepository,
-  UpdateResetPasswordTokenRepository
-{
+  UpdateResetPasswordTokenRepository {
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
     const pgUserRepo = this.getRepository(User)
     const pgUser = await pgUserRepo.findOne({ email: params.email })
@@ -24,7 +23,7 @@ export class PgAccountRepository extends PgRepository implements
         id: pgUser.id.toString(),
         name: pgUser.name,
         email: pgUser.email,
-        password: pgUser.password,
+        password: pgUser.password
       }
     }
   }
@@ -32,8 +31,8 @@ export class PgAccountRepository extends PgRepository implements
   async add (params: AddParams): Promise<AddResult> {
     const pgUserRepo = this.getRepository(User)
     const pgRoleRepo = this.getRepository(Role)
-    const role = await pgRoleRepo.findOne({name: 'user'})
-    if(role) {
+    const role = await pgRoleRepo.findOne({ name: 'user' })
+    if (role) {
       const account = await pgUserRepo.save({
         email: params.email,
         name: params.name,
@@ -71,10 +70,10 @@ export class PgAccountRepository extends PgRepository implements
 
     const pgUser = await pgUserRepo.findOne({ access_token: params.accessToken })
     if (pgUser !== undefined) {
-      const userRole = await pgRoleRepo.findOne({id: pgUser.role_id})
-      if(userRole){
+      const userRole = await pgRoleRepo.findOne({ id: pgUser.role_id })
+      if (userRole) {
         if (params.role) {
-          const paramRole = await pgRoleRepo.findOne({name: params.role})
+          const paramRole = await pgRoleRepo.findOne({ name: params.role })
           if (paramRole && userRole.weight >= paramRole.weight) {
             return {
               id: pgUser.id.toString(),
@@ -104,10 +103,10 @@ export class PgAccountRepository extends PgRepository implements
     const pgUserRepo = this.getRepository(User)
     const pgRoleRepo = this.getRepository(Role)
 
-    const pgUser =  await pgUserRepo.findOne({id: params.id})
-    if(pgUser) {
-      const userRole = await pgRoleRepo.findOne({id: pgUser.role_id})
-      if(userRole) {
+    const pgUser = await pgUserRepo.findOne({ id: params.id })
+    if (pgUser) {
+      const userRole = await pgRoleRepo.findOne({ id: pgUser.role_id })
+      if (userRole) {
         return {
           id: pgUser.id.toString(),
           name: pgUser.name,
@@ -119,14 +118,14 @@ export class PgAccountRepository extends PgRepository implements
     }
   }
 
-  async updateAccountRole (params: UpdateAccountRoleRepository.Params) : Promise<UpdateAccountRoleRepository.Result> {
+  async updateAccountRole (params: UpdateAccountRoleRepository.Params): Promise<UpdateAccountRoleRepository.Result> {
     const pgUserRepo = this.getRepository(User)
     const pgRoleRepo = this.getRepository(Role)
 
-    const pgUser = await pgUserRepo.findOne({id: params.id})
-    if(pgUser) {
-      const newRole = await pgRoleRepo.findOne({id: params.roleId})
-      if(newRole) {
+    const pgUser = await pgUserRepo.findOne({ id: params.id })
+    if (pgUser) {
+      const newRole = await pgRoleRepo.findOne({ id: params.roleId })
+      if (newRole) {
         pgUser.role_id = newRole.id
         await pgUserRepo.save(pgUser)
         return {
@@ -142,11 +141,11 @@ export class PgAccountRepository extends PgRepository implements
   async updateResetPasswordToken (params: UpdateResetPasswordTokenRepository.Params): Promise<UpdateResetPasswordTokenRepository.Result> {
     const pgUserRepo = this.getRepository(User)
     const pgRoleRepo = this.getRepository(Role)
-    let date = new Date()
-    const pgUser = await pgUserRepo.findOne({id: params.id})
-    if(pgUser) {
-      const role = await pgRoleRepo.findOne({id: pgUser.role_id})
-      if(role) {
+    const date = new Date()
+    const pgUser = await pgUserRepo.findOne({ id: params.id })
+    if (pgUser) {
+      const role = await pgRoleRepo.findOne({ id: pgUser.role_id })
+      if (role) {
         pgUser.reset_password_token = params.token
         pgUser.reset_password_token_expires_at = new Date(date.setDate(date.getDate() + 2))
         await pgUserRepo.save(pgUser)
@@ -156,7 +155,7 @@ export class PgAccountRepository extends PgRepository implements
           email: pgUser.email,
           role: role.name,
           password: pgUser.password,
-          reset_password_token: pgUser.reset_password_token,
+          reset_password_token: pgUser.reset_password_token
         }
       }
     }
