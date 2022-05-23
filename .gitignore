@@ -40,8 +40,9 @@ build/Release
 
 # Dependency directories
 node_modules/
+postgres/
 jspm_packages/
-
+.scannerwork
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
