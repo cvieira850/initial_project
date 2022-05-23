@@ -1,8 +1,8 @@
 import { app } from '@/main/config/app'
 import { auth } from '@/main/middlewares'
 import { ForbiddenError } from '@/application/errors'
-import { makeFakeDb } from '../../infra/postgres/mocks'
-import { User } from '@/infra/postgres/entities'
+import { makeFakeDb } from '../../infra/pg/mocks'
+import { User } from '@/infra/pg/entities'
 
 import request from 'supertest'
 import { IBackup } from 'pg-mem'
