@@ -69,5 +69,13 @@ describe('ResetPassword Service', () => {
       expect(hash.hash).toHaveBeenCalledWith({ plaintext: password })
       expect(hash.hash).toHaveBeenCalledTimes(1)
     })
+
+    it('(Should rethrow if hash throws)', async () => {
+      hash.hash.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ token, password })
+
+      await expect(promise).rejects.toThrow(new Error())
+    })
   })
 })
