@@ -1,6 +1,6 @@
 import { ForgotPasswordService } from '@/data/services'
 import { LoadAccountByEmailRepository, UpdateResetPasswordTokenRepository } from '@/data/protocols/db'
-import { SendEmailNodeMailer } from '@/infra/email'
+import { SendEmail } from '@/data/protocols/email'
 import { Encrypt } from '@/data/protocols/cryptography'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -8,7 +8,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 describe('ForgotPassword Service', () => {
   let sut: ForgotPasswordService
   let accountRepo: MockProxy<LoadAccountByEmailRepository & UpdateResetPasswordTokenRepository>
-  let sendEmail: MockProxy<SendEmailNodeMailer>
+  let sendEmail: MockProxy<SendEmail>
   let encrypt: MockProxy<Encrypt>
   let id: string
   let name: string
