@@ -2,6 +2,7 @@ import { ResetPasswordService } from '@/data/services'
 import { LoadAccountByResetTokenRepository } from '@/data/protocols/db'
 
 import { mock, MockProxy } from 'jest-mock-extended'
+import { InvalidRequestError } from '@/data/errors'
 
 describe('ResetPassword Service', () => {
   let sut: ResetPasswordService
@@ -44,6 +45,14 @@ describe('ResetPassword Service', () => {
       const promise = sut.perform({ token, password })
 
       await expect(promise).rejects.toThrow()
+    })
+
+    it('Should return an error if LoadAccountByResetToken return undefined', async () => {
+      accountRepo.loadByResetToken.mockResolvedValueOnce(undefined)
+
+      const promise = sut.perform({ token, password })
+
+      await expect(promise).rejects.toThrow(new InvalidRequestError('Account not found'))
     })
   })
 })
