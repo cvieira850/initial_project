@@ -218,5 +218,11 @@ describe('AccountPgRepository', () => {
 
       expect(user).toEqual({ id: '1', name: 'any_name', email: 'any_email' })
     })
+
+    it('Should return undefined if loadByResetToken dont return an user', async () => {
+      const user = await sut.loadByResetToken({ token: 'any_token' })
+
+      expect(user).toBeUndefined()
+    })
   })
 })
