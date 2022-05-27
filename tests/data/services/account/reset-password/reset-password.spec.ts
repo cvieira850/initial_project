@@ -1,13 +1,13 @@
 import { ResetPasswordService } from '@/data/services'
-import { LoadAccountByResetTokenRepository } from '@/data/protocols/db'
+import { LoadAccountByResetTokenRepository, UpdatePasswordRepository } from '@/data/protocols/db'
 import { Hash } from '@/data/protocols/cryptography'
+import { InvalidRequestError } from '@/data/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
-import { InvalidRequestError } from '@/data/errors'
 
 describe('ResetPassword Service', () => {
   let sut: ResetPasswordService
-  let accountRepo: MockProxy<LoadAccountByResetTokenRepository>
+  let accountRepo: MockProxy<LoadAccountByResetTokenRepository & UpdatePasswordRepository>
   let hash: MockProxy<Hash>
   let id: string
   let token: string
@@ -31,6 +31,11 @@ describe('ResetPassword Service', () => {
     })
     hash = mock()
     hash.hash.mockResolvedValue(hashedPassword)
+    accountRepo.updatePassword.mockResolvedValue({
+      id,
+      name,
+      email
+    })
   })
 
   beforeEach(() => {
@@ -76,6 +81,15 @@ describe('ResetPassword Service', () => {
       const promise = sut.perform({ token, password })
 
       await expect(promise).rejects.toThrow(new Error())
+    })
+  })
+
+  describe('UpdatePassword Repository', () => {
+    it('should call UpdatePassword Repository with correct values', async () => {
+      await sut.perform({ token, password })
+
+      expect(accountRepo.updatePassword).toHaveBeenCalledWith({ id, password: hashedPassword })
+      expect(accountRepo.updatePassword).toHaveBeenCalledTimes(1)
     })
   })
 })
