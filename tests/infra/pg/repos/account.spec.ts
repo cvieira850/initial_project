@@ -201,5 +201,11 @@ describe('AccountPgRepository', () => {
 
       expect(user).toEqual({ id: '1', name: 'any_name', email: 'any_email' })
     })
+
+    it('Should return undefined if updatePassword dont return an user', async () => {
+      const user = await sut.updatePassword({ id: '1', password: 'any_password' })
+
+      expect(user).toBeUndefined()
+    })
   })
 })
