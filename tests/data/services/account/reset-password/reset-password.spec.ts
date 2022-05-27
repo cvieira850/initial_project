@@ -91,5 +91,13 @@ describe('ResetPassword Service', () => {
       expect(accountRepo.updatePassword).toHaveBeenCalledWith({ id, password: hashedPassword })
       expect(accountRepo.updatePassword).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if UpdatePassword throws', async () => {
+      accountRepo.updatePassword.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ token, password })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
