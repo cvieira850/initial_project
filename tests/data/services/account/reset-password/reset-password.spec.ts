@@ -120,4 +120,10 @@ describe('ResetPassword Service', () => {
       expect(response).toBeUndefined()
     })
   })
+
+  it('Should return an account on success', async () => {
+    const result = await sut.perform({ token, password })
+
+    expect(result).toEqual({ id, name, email })
+  })
 })
