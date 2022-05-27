@@ -1,9 +1,9 @@
-import { ResetPassword, LoadAccountByResetTokenRepository, Hash } from './reset-password-protocols'
+import { ResetPassword, LoadAccountByResetTokenRepository, Hash, UpdatePasswordRepository } from './reset-password-protocols'
 import { InvalidRequestError } from '@/data/errors'
 
 export class ResetPasswordService implements ResetPassword {
   constructor (
-    private readonly accountRepo: LoadAccountByResetTokenRepository,
+    private readonly accountRepo: LoadAccountByResetTokenRepository & UpdatePasswordRepository,
     private readonly hash: Hash
   ) {}
 
@@ -12,7 +12,10 @@ export class ResetPasswordService implements ResetPassword {
     if (!account) {
       throw new InvalidRequestError('Account not found')
     }
-    await this.hash.hash({ plaintext: params.password })
+    const hashedPassword = await this.hash.hash({ plaintext: params.password })
+    if (hashedPassword) {
+      await this.accountRepo.updatePassword({ id: account.id, password: hashedPassword })
+    }
     return undefined
   }
 }
