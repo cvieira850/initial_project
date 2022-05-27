@@ -10,5 +10,5 @@ export namespace ResetPassword {
     password: string
   }
 
-  export type Result = Account | undefined
+  export type Result = Account | Error | undefined
 }
