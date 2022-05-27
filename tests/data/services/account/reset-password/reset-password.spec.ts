@@ -1,6 +1,7 @@
 import { ResetPasswordService } from '@/data/services'
 import { LoadAccountByResetTokenRepository, UpdatePasswordRepository } from '@/data/protocols/db'
 import { Hash } from '@/data/protocols/cryptography'
+import { SendEmail } from '@/data/protocols/email'
 import { InvalidRequestError } from '@/data/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -9,6 +10,7 @@ describe('ResetPassword Service', () => {
   let sut: ResetPasswordService
   let accountRepo: MockProxy<LoadAccountByResetTokenRepository & UpdatePasswordRepository>
   let hash: MockProxy<Hash>
+  let sendEmail: MockProxy<SendEmail>
   let id: string
   let token: string
   let password: string
@@ -36,10 +38,12 @@ describe('ResetPassword Service', () => {
       name,
       email
     })
+    sendEmail = mock()
+    sendEmail.send.mockResolvedValue(true)
   })
 
   beforeEach(() => {
-    sut = new ResetPasswordService(accountRepo, hash)
+    sut = new ResetPasswordService(accountRepo, hash, sendEmail)
   })
 
   describe('LoadAccountByResetToken Repository', () => {
@@ -98,6 +102,14 @@ describe('ResetPassword Service', () => {
       const promise = sut.perform({ token, password })
 
       await expect(promise).rejects.toThrow()
+    })
+  })
+
+  describe('Send Email', () => {
+    it('Should call sendEmail with valid id once', async () => {
+      await sut.perform({ token, password })
+
+      expect(sendEmail.send).toHaveBeenCalledTimes(1)
     })
   })
 })
