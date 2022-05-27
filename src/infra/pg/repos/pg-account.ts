@@ -1,4 +1,4 @@
-import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository, UpdateResetPasswordTokenRepository, UpdatePasswordRepository } from '@/data/protocols/db'
+import { LoadAccountByTokenRepository, AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByIdRepository, UpdateAccountRoleRepository, UpdateResetPasswordTokenRepository, UpdatePasswordRepository, LoadAccountByResetTokenRepository } from '@/data/protocols/db'
 import { User, Role } from '@/infra/pg/entities'
 import { PgRepository } from './repository'
 
@@ -15,7 +15,8 @@ export class PgAccountRepository extends PgRepository implements
   LoadAccountByIdRepository,
   UpdateAccountRoleRepository,
   UpdateResetPasswordTokenRepository,
-  UpdatePasswordRepository {
+  UpdatePasswordRepository,
+  LoadAccountByResetTokenRepository {
   async loadByEmail (params: LoadParams): Promise<LoadResult> {
     const pgUserRepo = this.getRepository(User)
     const pgUser = await pgUserRepo.findOne({ email: params.email })
@@ -168,6 +169,19 @@ export class PgAccountRepository extends PgRepository implements
     if (pgUser) {
       pgUser.password = params.password
       await pgUserRepo.save(pgUser)
+      return {
+        id: pgUser.id.toString(),
+        name: pgUser.name,
+        email: pgUser.email
+      }
+    }
+  }
+
+  async loadByResetToken (params: LoadAccountByResetTokenRepository.Params): Promise<LoadAccountByResetTokenRepository.Result> {
+    const pgUserRepo = this.getRepository(User)
+
+    const pgUser = await pgUserRepo.findOne({ reset_password_token: params.token })
+    if (pgUser) {
       return {
         id: pgUser.id.toString(),
         name: pgUser.name,
