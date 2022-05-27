@@ -17,8 +17,8 @@ export class ResetPasswordService implements ResetPassword {
     if (hashedPassword) {
       const updatedAccount = await this.accountRepo.updatePassword({ id: account.id, password: hashedPassword })
       if (updatedAccount) {
-        await this.sendEmail.send({
-          to: account.email,
+        const status = await this.sendEmail.send({
+          to: updatedAccount.email,
           html: `
           <!DOCTYPE html>
           <html lang="pt-br">
@@ -38,6 +38,9 @@ export class ResetPasswordService implements ResetPassword {
         `,
           subject: 'Reset de senha'
         })
+        if (status) {
+          return account
+        }
       }
     }
     return undefined
