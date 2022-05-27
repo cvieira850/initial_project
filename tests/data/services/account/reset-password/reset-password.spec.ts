@@ -37,5 +37,13 @@ describe('ResetPassword Service', () => {
       expect(accountRepo.loadByResetToken).toHaveBeenCalledWith({ token: 'any_token' })
       expect(accountRepo.loadByResetToken).toHaveBeenCalledTimes(1)
     })
+
+    it('Should rethrow if LoadAccountByResetToken throws', async () => {
+      accountRepo.loadByResetToken.mockRejectedValueOnce(new Error())
+
+      const promise = sut.perform({ token, password })
+
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
