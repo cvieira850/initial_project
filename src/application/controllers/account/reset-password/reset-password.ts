@@ -1,10 +1,16 @@
-import { HttpRequest, HttpResponse } from '@/application/helpers'
+import { HttpRequest, HttpResponse, ok } from '@/application/helpers'
 import { Controller } from '@/application/controllers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
+import { ResetPassword } from '@/domain/usecases'
 
 export class ResetPasswordController extends Controller {
+  constructor (private readonly resetPassword: ResetPassword) {
+    super()
+  }
+
   async perform (httpRequest: HttpRequest): Promise<HttpResponse<any>> {
-    throw new Error('Method not implemented.')
+    const account = await this.resetPassword.perform({ token: httpRequest.params.token, password: httpRequest.body.password })
+    return ok(account)
   }
 
   override buildValidators (httpRequest: HttpRequest): Validator[] {
