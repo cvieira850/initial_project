@@ -1,6 +1,7 @@
 import { Controller, ResetPasswordController } from '@/application/controllers'
 import { UnauthorizedError } from '@/application/errors'
 import { CompareFieldsValidation, RequiredValidator, StringValidator } from '@/application/validation'
+import { InvalidRequestError } from '@/data/errors'
 import { ResetPassword } from '@/domain/usecases'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -81,6 +82,17 @@ describe('ResetPasswordController', () => {
           name,
           email
         }
+      })
+    })
+
+    it('Should return 401 if ResetPassword throw invalidRequestError', async () => {
+      resetPassword.perform.mockRejectedValueOnce(new InvalidRequestError('Account not found'))
+
+      const httpResponse = await sut.handle({ params: { token }, body: { password, passwordConfirmation } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
       })
     })
   })
