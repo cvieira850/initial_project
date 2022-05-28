@@ -11,7 +11,9 @@ import {
   rolesSchema,
   userRoleSchema,
   accountRoleSchema,
-  forgotParamsSchema
+  forgotParamsSchema,
+  userStrictSchema,
+  resetPasswordParamsSchema
 } from './schemas/'
 
 export default {
@@ -27,5 +29,7 @@ export default {
   role: roleSchema,
   roles: rolesSchema,
   userRole: userRoleSchema,
-  accountRole: accountRoleSchema
+  accountRole: accountRoleSchema,
+  userStrict: userStrictSchema,
+  resetPasswordParams: resetPasswordParamsSchema
 }

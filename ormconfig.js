@@ -6,13 +6,13 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   migrations: [
-    `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/postgres/migrations/*.{js,ts}`
+    `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/pg/migrations/*.{js,ts}`
   ],
   entities: [
-    `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/postgres/entities/index.{js,ts}`
+    `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/pg/entities/index.{js,ts}`
   ],
   cli: {
-    migrationsDir: `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/postgres/migrations`,
-    entitiesDir: `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/postgres/entities`
+    migrationsDir: `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/pg/migrations`,
+    entitiesDir: `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/pg/entities`
   }
 }
