@@ -1,4 +1,5 @@
 import { Controller, ResetPasswordController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors'
 import { CompareFieldsValidation, RequiredValidator, StringValidator } from '@/application/validation'
 import { ResetPassword } from '@/domain/usecases'
 
@@ -17,7 +18,7 @@ describe('ResetPasswordController', () => {
   beforeAll(() => {
     token = 'any_token'
     password = 'any_password'
-    passwordConfirmation = 'any_password_confirmation'
+    passwordConfirmation = 'any_password'
     id = 'any_id'
     name = 'any_name'
     email = 'any_email'
@@ -51,12 +52,23 @@ describe('ResetPasswordController', () => {
     ])
   })
 
-  describe('resetPassword', () => {
-    it('Should call resetPassword with correct values', async () => {
+  describe('ResetPassword', () => {
+    it('Should call ResetPassword with correct values', async () => {
       await sut.perform({ params: { token }, body: { password, passwordConfirmation } })
 
       expect(resetPassword.perform).toHaveBeenCalledWith({ token, password })
       expect(resetPassword.perform).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return 401 if ResetPassword return undefined', async () => {
+      resetPassword.perform.mockResolvedValueOnce(undefined)
+
+      const httpResponse = await sut.handle({ params: { token }, body: { password, passwordConfirmation } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 401,
+        data: new UnauthorizedError()
+      })
     })
   })
 })
