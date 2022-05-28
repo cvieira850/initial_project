@@ -8,7 +8,8 @@ import {
   rolePath,
   roleByIdPath,
   usersRolePath,
-  forgotPasswordPath
+  forgotPasswordPath,
+  resetPasswordPath
 } from './paths/'
 
 export default {
@@ -21,5 +22,6 @@ export default {
   '/roles': rolePath,
   '/roles/{roleId}': roleByIdPath,
   '/users/{userId}/role': usersRolePath,
-  '/users/forgot-password': forgotPasswordPath
+  '/users/forgot-password': forgotPasswordPath,
+  '/users/reset-password/{token}': resetPasswordPath
 }

@@ -20,6 +20,9 @@ export const forgotPasswordPath = {
       400: {
         $ref: '#/components/badRequest'
       },
+      401: {
+        $ref: '#/components/unauthorized'
+      },
       403: {
         $ref: '#/components/forbidden'
       },
