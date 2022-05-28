@@ -1,5 +1,5 @@
 import { Controller, ResetPasswordController } from '@/application/controllers'
-import { UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
 import { CompareFieldsValidation, RequiredValidator, StringValidator } from '@/application/validation'
 import { InvalidRequestError } from '@/data/errors'
 import { ResetPassword } from '@/domain/usecases'
@@ -93,6 +93,18 @@ describe('ResetPasswordController', () => {
       expect(httpResponse).toEqual({
         statusCode: 401,
         data: new UnauthorizedError()
+      })
+    })
+
+    it('Should rethrow if ResetPassword throw', async () => {
+      const error = new Error('infra_error')
+      resetPassword.perform.mockRejectedValueOnce(error)
+
+      const httpResponse = await sut.handle({ params: { token }, body: { password, passwordConfirmation } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 500,
+        data: new ServerError(error)
       })
     })
   })
