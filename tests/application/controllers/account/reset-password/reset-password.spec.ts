@@ -70,5 +70,18 @@ describe('ResetPasswordController', () => {
         data: new UnauthorizedError()
       })
     })
+
+    it('Should return 200 on success', async () => {
+      const httpResponse = await sut.handle({ params: { token }, body: { password, passwordConfirmation } })
+
+      expect(httpResponse).toEqual({
+        statusCode: 200,
+        data: {
+          id,
+          name,
+          email
+        }
+      })
+    })
   })
 })
